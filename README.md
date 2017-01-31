@@ -1,2 +1,2 @@
 # Robot-Code
-This is our perliminary robot code
+This is our preliminary robot code
