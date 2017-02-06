@@ -1,5 +1,4 @@
 package org.usfirst.frc.team6695.robot;
-
 import java.awt.List;
 import java.util.ArrayList;
 
@@ -33,19 +32,19 @@ public class Robot extends IterativeRobot {
 	CANTalon ballMotor2 = new CANTalon(2);
 	CANTalon climbMotor1 = new CANTalon(3);
 
-	final int driveMoterRight1 = 1;// values are subject to change
-	final int driveMoterRight2 = 2;
-	final int driveMoterLeft1 = 3;
-	final int driveMoterLeft2 = 4;
+	final int driveMotorFrontRight = 0;// values are subject to change
+	final int driveMotorBackRight = 1;
+	final int driveMotorFrontLeft = 2;
+	final int driveMotorBackLeft = 3;
 
 	// Drives
-	RobotDrive drive1 = new RobotDrive(driveMoterLeft1, driveMoterRight1);
-	RobotDrive drive2 = new RobotDrive(driveMoterLeft2, driveMoterRight2);
+	RobotDrive frontDrive = new RobotDrive(driveMotorFrontLeft, driveMotorFrontRight);
+	RobotDrive backDrive = new RobotDrive(driveMotorBackLeft, driveMotorBackRight);
 	RobotDrive ballDrive = new RobotDrive(ballMotor1, ballMotor2);
 
 	// states
 	boolean isClimbing = false;
-	boolean bHasBeenHeld = false;
+	boolean bPreviouslyHeld = false;
 
 	Joystick stick = new Joystick(0);
 	// XboxController stick = new XboxController(0);
@@ -91,8 +90,8 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		if (!isClimbing) {// If we are not climbing, we are driving
-			drive1.arcadeDrive(stick);
-			drive2.arcadeDrive(stick);
+			frontDrive.arcadeDrive(stick);
+			backDrive.arcadeDrive(stick);
 		} else {// we must be climbing
 			climbMotor1.set(stick.getY() * stick.getThrottle());
 			//TODO Motor Must stop before we break the button
@@ -103,7 +102,7 @@ public class Robot extends IterativeRobot {
 		boolean buttonX = stick.getRawButton(3);
 		boolean buttonY = stick.getRawButton(4);
 
-		if (buttonB && !bHasBeenHeld) {// if b is clicked, we are in climbing
+		if (buttonB && !bPreviouslyHeld) {// if b is clicked, we are in climbing
 										// mode
 			isClimbing = !isClimbing;
 			System.out.println("Current Climbing State: " + isClimbing);
@@ -111,9 +110,9 @@ public class Robot extends IterativeRobot {
 		// So holding down the button does not rapidly switch between climbing
 		// and driving
 		if (buttonB)
-			bHasBeenHeld = true;
+			bPreviouslyHeld = true;
 		else
-			bHasBeenHeld = false;
+			bPreviouslyHeld = false;
 
 		if (buttonX) {// if we hold x, ball shooter should shoot.
 			System.out.println("pressedX");
