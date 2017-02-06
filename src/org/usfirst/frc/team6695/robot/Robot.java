@@ -73,8 +73,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		// Drive for 2 seconds
-		System.out.print("a");
+	//TODO Make Autonomous work...
 	}
 
 	/**
@@ -96,6 +95,7 @@ public class Robot extends IterativeRobot {
 			drive2.arcadeDrive(stick);
 		} else {// we must be climbing
 			climbMotor1.set(stick.getY() * stick.getThrottle());
+			//TODO Motor Must stop before we break the button
 		}
 
 		boolean buttonA = stick.getRawButton(1);
