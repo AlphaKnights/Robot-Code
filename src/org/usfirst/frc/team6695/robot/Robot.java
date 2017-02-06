@@ -41,6 +41,10 @@ public class Robot extends IterativeRobot {
 	RobotDrive drive2 = new RobotDrive(driveMoterLeft2, driveMoterRight2);
 	RobotDrive ballDrive = new RobotDrive(ballMotor1, ballMotor2);
 
+	// states
+	boolean isClimbing = false;
+	boolean bHasBeenHeld = false;
+
 	Joystick stick = new Joystick(0);
 	// XboxController stick = new XboxController(0);
 	Timer timer = new Timer();
@@ -85,19 +89,33 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		drive1.arcadeDrive(stick);
-		drive2.arcadeDrive(stick);
-
+		if (!isClimbing) {//If we are not climbing, we are driveing
+			drive1.arcadeDrive(stick);
+			drive2.arcadeDrive(stick);
+		}
+		
 		boolean buttonA = stick.getRawButton(1);
 		boolean buttonB = stick.getRawButton(2);
 		boolean buttonX = stick.getRawButton(3);
 		boolean buttonY = stick.getRawButton(4);
-		if (buttonX) {
+
+		if (buttonB && !bHasBeenHeld) {//if b is clicked, we are in climbing mode
+			isClimbing = !isClimbing;
+			System.out.println("Current Climbing State: " + isClimbing);
+		}
+		//So holding down the button does not rapidly switch between climbing and driving
+		if (buttonB)
+			bHasBeenHeld = true;
+		else
+			bHasBeenHeld = false;
+
+		if (buttonX) {//if we hold x, ball shooter should shoot.
 			System.out.println("pressedX");
 			ballDrive.drive(1.0, 0.0);
 		} else {
 			ballDrive.drive(0.0, 0.0);
 		}
+		
 		if (buttonY) {
 			System.out.println("pressedY");
 		}
