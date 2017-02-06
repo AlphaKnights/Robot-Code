@@ -31,6 +31,8 @@ public class Robot extends IterativeRobot {
 	// motors
 	CANTalon ballMotor1 = new CANTalon(1);
 	CANTalon ballMotor2 = new CANTalon(2);
+	CANTalon climbMotor1 = new CANTalon(3);
+	
 	final int driveMoterRight1 = 1;
 	final int driveMoterRight2 = 2;
 	final int driveMoterLeft1 = 3;
@@ -92,6 +94,8 @@ public class Robot extends IterativeRobot {
 		if (!isClimbing) {//If we are not climbing, we are driveing
 			drive1.arcadeDrive(stick);
 			drive2.arcadeDrive(stick);
+		}else{//we must be climbing
+			
 		}
 		
 		boolean buttonA = stick.getRawButton(1);
