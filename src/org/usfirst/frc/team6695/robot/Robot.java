@@ -27,13 +27,22 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  * directory.
  */
 public class Robot extends IterativeRobot {
+	
+	//motors
 	CANTalon ballMotor1 = new CANTalon(1);
 	CANTalon ballMotor2 = new CANTalon(2);
+	final int driveMoterRight1 = 1;
+	final int driveMoterRight2 = 2;
+	final int driveMoterLeft1 = 3;
+	final int driveMoterLeft2 = 4;
+	
+	//Drives
+	RobotDrive drive1 = new RobotDrive(driveMoterLeft1, driveMoterRight1);
+	RobotDrive drive2 = new RobotDrive(driveMoterLeft2,driveMoterRight2);
 	RobotDrive ballDrive = new RobotDrive(ballMotor1, ballMotor2);
-
-	RobotDrive myRobot = new RobotDrive(0, 1, 2, 3);
+	
 	Joystick stick = new Joystick(0);
-	//XboxController stick = new XboxController(0);
+	// XboxController stick = new XboxController(0);
 	Timer timer = new Timer();
 
 	/**
@@ -42,46 +51,6 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		new Thread(() -> {
-			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-			camera.setResolution(640, 480);
-
-			CvSink cvSink = CameraServer.getInstance().getVideo();
-			CvSource os = CameraServer.getInstance().putVideo("os", 640, 480);
-
-			Mat source = new Mat();
-			Mat output = new Mat();
-			Mat output2 = new Mat();
-
-			while (!Thread.interrupted()) {
-				cvSink.grabFrame(source);
-
-				ArrayList<MatOfPoint> contours = new ArrayList<MatOfPoint>();
-				Imgproc.findContours(output2.clone(), contours, new Mat(), Imgproc.RETR_LIST,
-						Imgproc.CHAIN_APPROX_SIMPLE);
-				MatOfPoint2f approxCurve = new MatOfPoint2f();
-				int x = 1;
-
-				for (int i = 0; i < contours.size(); i++) {
-					MatOfPoint2f contour2f = new MatOfPoint2f(contours.get(i).toArray());
-
-					double approxDistance = Imgproc.arcLength(contour2f, true) * 0.02;
-					Imgproc.approxPolyDP(contour2f, approxCurve, approxDistance, true);
-
-					MatOfPoint points = new MatOfPoint(approxCurve.toArray());
-
-					Rect rect = Imgproc.boundingRect(points);
-					if (rect.height > 50 && rect.height < 100) {
-						Rect roi = new Rect(rect.x, rect.y, rect.width, rect.height);
-						Mat cropped = new Mat(output2, roi);
-						Imgcodecs.imwrite("letter" + x + ".jpg", cropped);
-						x++;
-					}
-				}
-
-				os.putFrame(output);
-			}
-		}).start();
 	}
 
 	/**
@@ -116,7 +85,9 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		myRobot.arcadeDrive(stick);
+		drive1.arcadeDrive(stick);
+		drive2.arcadeDrive(stick);
+		
 		boolean buttonA = stick.getRawButton(1);
 		boolean buttonB = stick.getRawButton(2);
 		boolean buttonX = stick.getRawButton(3);
