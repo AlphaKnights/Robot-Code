@@ -32,7 +32,7 @@ public class Robot extends IterativeRobot {
 	CANTalon ballMotor1 = new CANTalon(1);
 	CANTalon ballMotor2 = new CANTalon(2);
 	CANTalon climbMotor1 = new CANTalon(3);
-	
+
 	final int driveMoterRight1 = 1;
 	final int driveMoterRight2 = 2;
 	final int driveMoterLeft1 = 3;
@@ -91,35 +91,37 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		if (!isClimbing) {//If we are not climbing, we are driveing
+		if (!isClimbing) {// If we are not climbing, we are driveing
 			drive1.arcadeDrive(stick);
 			drive2.arcadeDrive(stick);
-		}else{//we must be climbing
-			
+		} else {// we must be climbing
+			climbMotor1.set(stick.getY());
 		}
-		
+
 		boolean buttonA = stick.getRawButton(1);
 		boolean buttonB = stick.getRawButton(2);
 		boolean buttonX = stick.getRawButton(3);
 		boolean buttonY = stick.getRawButton(4);
 
-		if (buttonB && !bHasBeenHeld) {//if b is clicked, we are in climbing mode
+		if (buttonB && !bHasBeenHeld) {// if b is clicked, we are in climbing
+										// mode
 			isClimbing = !isClimbing;
 			System.out.println("Current Climbing State: " + isClimbing);
 		}
-		//So holding down the button does not rapidly switch between climbing and driving
+		// So holding down the button does not rapidly switch between climbing
+		// and driving
 		if (buttonB)
 			bHasBeenHeld = true;
 		else
 			bHasBeenHeld = false;
 
-		if (buttonX) {//if we hold x, ball shooter should shoot.
+		if (buttonX) {// if we hold x, ball shooter should shoot.
 			System.out.println("pressedX");
 			ballDrive.drive(1.0, 0.0);
 		} else {
 			ballDrive.drive(0.0, 0.0);
 		}
-		
+
 		if (buttonY) {
 			System.out.println("pressedY");
 		}
