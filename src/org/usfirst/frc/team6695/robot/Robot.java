@@ -27,20 +27,20 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	
-	//motors
+
+	// motors
 	CANTalon ballMotor1 = new CANTalon(1);
 	CANTalon ballMotor2 = new CANTalon(2);
 	final int driveMoterRight1 = 1;
 	final int driveMoterRight2 = 2;
 	final int driveMoterLeft1 = 3;
 	final int driveMoterLeft2 = 4;
-	
-	//Drives
+
+	// Drives
 	RobotDrive drive1 = new RobotDrive(driveMoterLeft1, driveMoterRight1);
-	RobotDrive drive2 = new RobotDrive(driveMoterLeft2,driveMoterRight2);
+	RobotDrive drive2 = new RobotDrive(driveMoterLeft2, driveMoterRight2);
 	RobotDrive ballDrive = new RobotDrive(ballMotor1, ballMotor2);
-	
+
 	Joystick stick = new Joystick(0);
 	// XboxController stick = new XboxController(0);
 	Timer timer = new Timer();
@@ -87,7 +87,7 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		drive1.arcadeDrive(stick);
 		drive2.arcadeDrive(stick);
-		
+
 		boolean buttonA = stick.getRawButton(1);
 		boolean buttonB = stick.getRawButton(2);
 		boolean buttonX = stick.getRawButton(3);
