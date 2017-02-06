@@ -33,7 +33,7 @@ public class Robot extends IterativeRobot {
 	CANTalon ballMotor2 = new CANTalon(2);
 	CANTalon climbMotor1 = new CANTalon(3);
 
-	final int driveMoterRight1 = 1;
+	final int driveMoterRight1 = 1;// values are subject to change
 	final int driveMoterRight2 = 2;
 	final int driveMoterLeft1 = 3;
 	final int driveMoterLeft2 = 4;
@@ -91,11 +91,11 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		if (!isClimbing) {// If we are not climbing, we are driveing
+		if (!isClimbing) {// If we are not climbing, we are driving
 			drive1.arcadeDrive(stick);
 			drive2.arcadeDrive(stick);
 		} else {// we must be climbing
-			climbMotor1.set(stick.getY());
+			climbMotor1.set(stick.getY() * stick.getThrottle());
 		}
 
 		boolean buttonA = stick.getRawButton(1);
