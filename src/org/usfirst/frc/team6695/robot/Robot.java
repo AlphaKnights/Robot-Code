@@ -36,8 +36,7 @@ public class Robot extends IterativeRobot {
 	boolean isClimbing = false;
 	boolean bPreviouslyHeld = false;
 
-	Joystick stick = new Joystick(0);
-	// XboxController stick = new XboxController(0);
+	Joystick joystick = new Joystick(0);
 	Timer timer = new Timer();
 
 	/**
@@ -80,18 +79,18 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		if (!isClimbing) {// If we are not climbing, we are driving
-			frontDrive.arcadeDrive(stick);
-			backDrive.arcadeDrive(stick);
+			frontDrive.arcadeDrive(joystick);
+			backDrive.arcadeDrive(joystick);
 		} else {// we must be climbing
 			if (climbMotor1.getOutputCurrent() < 1.0)
-				climbMotor1.set(stick.getY() * stick.getThrottle());
+				climbMotor1.set(joystick.getY() * joystick.getThrottle());
 			// TODO Motor Must stop before we break the button
 		}
 
-		boolean buttonA = stick.getRawButton(1);
-		boolean buttonB = stick.getRawButton(2);
-		boolean buttonX = stick.getRawButton(3);
-		boolean buttonY = stick.getRawButton(4);
+		boolean buttonA = xbox.getRawButton(1);
+		boolean buttonB = xbox.getRawButton(2);
+		boolean buttonX = xbox.getRawButton(3);
+		boolean buttonY = xbox.getRawButton(4);
 
 		if (buttonB && !bPreviouslyHeld) {// if b is clicked, we are in climbing
 											// mode
