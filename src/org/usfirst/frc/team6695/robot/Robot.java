@@ -36,8 +36,11 @@ public class Robot extends IterativeRobot {
 	boolean isClimbing = false;
 	boolean bPreviouslyHeld = false;
 
+	// Control Input
 	Joystick joystick = new Joystick(0);
 	XboxController xbox = new XboxController(1);
+	
+	//timers
 	Timer timer = new Timer();
 
 	/**
