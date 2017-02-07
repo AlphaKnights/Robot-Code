@@ -1,4 +1,5 @@
 package org.usfirst.frc.team6695.robot;
+
 import java.awt.List;
 import java.util.ArrayList;
 
@@ -72,7 +73,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-	//TODO Make Autonomous work...
+		// TODO Make Autonomous work...
 	}
 
 	/**
@@ -94,7 +95,7 @@ public class Robot extends IterativeRobot {
 			backDrive.arcadeDrive(stick);
 		} else {// we must be climbing
 			climbMotor1.set(stick.getY() * stick.getThrottle());
-			//TODO Motor Must stop before we break the button
+			// TODO Motor Must stop before we break the button
 		}
 
 		boolean buttonA = stick.getRawButton(1);
@@ -103,7 +104,7 @@ public class Robot extends IterativeRobot {
 		boolean buttonY = stick.getRawButton(4);
 
 		if (buttonB && !bPreviouslyHeld) {// if b is clicked, we are in climbing
-										// mode
+											// mode
 			isClimbing = !isClimbing;
 			System.out.println("Current Climbing State: " + isClimbing);
 		}
