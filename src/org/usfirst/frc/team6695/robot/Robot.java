@@ -94,7 +94,8 @@ public class Robot extends IterativeRobot {
 			frontDrive.arcadeDrive(stick);
 			backDrive.arcadeDrive(stick);
 		} else {// we must be climbing
-			climbMotor1.set(stick.getY() * stick.getThrottle());
+			if (climbMotor1.getOutputCurrent() < 1.0)
+				climbMotor1.set(stick.getY() * stick.getThrottle());
 			// TODO Motor Must stop before we break the button
 		}
 
