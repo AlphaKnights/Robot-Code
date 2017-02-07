@@ -37,6 +37,7 @@ public class Robot extends IterativeRobot {
 	boolean bPreviouslyHeld = false;
 
 	Joystick joystick = new Joystick(0);
+	XboxController xbox = new XboxController(1);
 	Timer timer = new Timer();
 
 	/**
