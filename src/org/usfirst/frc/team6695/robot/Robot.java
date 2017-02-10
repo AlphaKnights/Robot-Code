@@ -1,6 +1,5 @@
 package org.usfirst.frc.team6695.robot;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -22,7 +21,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  */
 public class Robot extends IterativeRobot {
 	// motors
-	CANTalon climbMotor1 = null;
+	CANTalon climbMotor1;
 
 	// Drives
 	RobotDrive frontDrive;
@@ -34,9 +33,14 @@ public class Robot extends IterativeRobot {
 	boolean bPreviouslyHeld = false;
 
 	// Control Input
-	Joystick joystick = new Joystick(0);
-	XboxController xbox = new XboxController(1);
+	Joystick joystick;
+	XboxController xbox;
 
+	// Speeds
+	double stirSpeed;
+
+	// max
+	double climbMaxCurrent;
 	// timers
 	Timer timer = new Timer();
 
@@ -56,13 +60,24 @@ public class Robot extends IterativeRobot {
 			System.err.println("Could Not Read config");
 			e.printStackTrace();
 		}
+		//init inputs
+		joystick = new Joystick(Integer.parseInt(prop.getProperty("joystick"));
+		xbox = new XboxController(Integer.parseInt(prop.getProperty("xbox")));
+		// init drives
 		frontDrive = new RobotDrive(Integer.parseInt(prop.getProperty("driveMotorFrontLeft")),
 				Integer.parseInt(prop.getProperty("driveMotorFrontRight")));
 		backDrive = new RobotDrive(Integer.parseInt(prop.getProperty("driveMotorBackLeft")),
 				Integer.parseInt(prop.getProperty("driveMotorBackRight")));
 		ballDrive = new RobotDrive(new CANTalon(Integer.parseInt(prop.getProperty("ballMotor1"))),
 				new CANTalon(Integer.parseInt(prop.getProperty("ballMotor1"))));
+		// init motors
 		climbMotor1 = new CANTalon(Integer.parseInt(prop.getProperty("climbMotor1")));
+
+		// init speeds
+		stirSpeed = Double.parseDouble(prop.getProperty("stirSpeed"));
+
+		// init Max
+		climbMaxCurrent = Double.parseDouble(prop.getProperty("climbMaxCurrent"));
 	}
 
 	/**
