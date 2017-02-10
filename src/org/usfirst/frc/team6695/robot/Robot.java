@@ -45,7 +45,7 @@ public class Robot extends IterativeRobot {
 	Timer timer = new Timer();
 
 	// config
-	Properties prop = new Properties();
+	Properties config = new Properties();
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -55,29 +55,29 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		try {
 			InputStream input = Robot.class.getResourceAsStream("config.properties");
-			prop.load(input);
+			config.load(input);
 		} catch (IOException e) {
 			System.err.println("Could Not Read config");
 			e.printStackTrace();
 		}
-		//init inputs
-		joystick = new Joystick(Integer.parseInt(prop.getProperty("joystick"));
-		xbox = new XboxController(Integer.parseInt(prop.getProperty("xbox")));
+		// init inputs
+		joystick = new Joystick(Integer.parseInt(config.getProperty("joystick")));
+		xbox = new XboxController(Integer.parseInt(config.getProperty("xbox")));
 		// init drives
-		frontDrive = new RobotDrive(Integer.parseInt(prop.getProperty("driveMotorFrontLeft")),
-				Integer.parseInt(prop.getProperty("driveMotorFrontRight")));
-		backDrive = new RobotDrive(Integer.parseInt(prop.getProperty("driveMotorBackLeft")),
-				Integer.parseInt(prop.getProperty("driveMotorBackRight")));
-		ballDrive = new RobotDrive(new CANTalon(Integer.parseInt(prop.getProperty("ballMotor1"))),
-				new CANTalon(Integer.parseInt(prop.getProperty("ballMotor1"))));
+		frontDrive = new RobotDrive(Integer.parseInt(config.getProperty("driveMotorFrontLeft")),
+				Integer.parseInt(config.getProperty("driveMotorFrontRight")));
+		backDrive = new RobotDrive(Integer.parseInt(config.getProperty("driveMotorBackLeft")),
+				Integer.parseInt(config.getProperty("driveMotorBackRight")));
+		ballDrive = new RobotDrive(new CANTalon(Integer.parseInt(config.getProperty("ballMotor1"))),
+				new CANTalon(Integer.parseInt(config.getProperty("ballMotor1"))));
 		// init motors
-		climbMotor1 = new CANTalon(Integer.parseInt(prop.getProperty("climbMotor1")));
+		climbMotor1 = new CANTalon(Integer.parseInt(config.getProperty("climbMotor1")));
 
 		// init speeds
-		stirSpeed = Double.parseDouble(prop.getProperty("stirSpeed"));
+		stirSpeed = Double.parseDouble(config.getProperty("stirSpeed"));
 
 		// init Max
-		climbMaxCurrent = Double.parseDouble(prop.getProperty("climbMaxCurrent"));
+		climbMaxCurrent = Double.parseDouble(config.getProperty("climbMaxCurrent"));
 	}
 
 	/**
