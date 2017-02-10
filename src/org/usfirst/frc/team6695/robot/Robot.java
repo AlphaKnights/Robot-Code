@@ -47,12 +47,7 @@ public class Robot extends IterativeRobot {
 	// config
 	Properties config = new Properties();
 
-	/**
-	 * This function is run when the robot is first started up and should be
-	 * used for any initialization code.
-	 */
-	@Override
-	public void robotInit() {
+	public void configSetup() {
 		try {
 			InputStream input = Robot.class.getResourceAsStream("config.properties");
 			config.load(input);
@@ -78,6 +73,16 @@ public class Robot extends IterativeRobot {
 
 		// init Max
 		climbMaxCurrent = Double.parseDouble(config.getProperty("climbMaxCurrent"));
+
+	}
+
+	/**
+	 * This function is run when the robot is first started up and should be
+	 * used for any initialization code.
+	 */
+	@Override
+	public void robotInit() {
+		configSetup();
 	}
 
 	/**
