@@ -1,5 +1,10 @@
 package org.usfirst.frc.team6695.robot;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import com.ctre.CANTalon;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
@@ -16,21 +21,13 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  * directory.
  */
 public class Robot extends IterativeRobot {
-
 	// motors
-	CANTalon ballMotor1 = new CANTalon(1);
-	CANTalon ballMotor2 = new CANTalon(2);
-	CANTalon climbMotor1 = new CANTalon(3);
-
-	final int driveMotorFrontRight = 0;// values are subject to change
-	final int driveMotorBackRight = 1;
-	final int driveMotorFrontLeft = 2;
-	final int driveMotorBackLeft = 3;
+	CANTalon climbMotor1 = null;
 
 	// Drives
-	RobotDrive frontDrive = new RobotDrive(driveMotorFrontLeft, driveMotorFrontRight);
-	RobotDrive backDrive = new RobotDrive(driveMotorBackLeft, driveMotorBackRight);
-	RobotDrive ballDrive = new RobotDrive(ballMotor1, ballMotor2);
+	RobotDrive frontDrive;
+	RobotDrive backDrive;
+	RobotDrive ballDrive;
 
 	// states
 	boolean isClimbing = false;
@@ -39,9 +36,12 @@ public class Robot extends IterativeRobot {
 	// Control Input
 	Joystick joystick = new Joystick(0);
 	XboxController xbox = new XboxController(1);
-	
-	//timers
+
+	// timers
 	Timer timer = new Timer();
+
+	// config
+	Properties prop = new Properties();
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -49,6 +49,20 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
+		try {
+			InputStream input = Robot.class.getResourceAsStream("config.properties");
+			prop.load(input);
+		} catch (IOException e) {
+			System.err.println("Could Not Read config");
+			e.printStackTrace();
+		}
+		frontDrive = new RobotDrive(Integer.parseInt(prop.getProperty("driveMotorFrontLeft")),
+				Integer.parseInt(prop.getProperty("driveMotorFrontRight")));
+		backDrive = new RobotDrive(Integer.parseInt(prop.getProperty("driveMotorBackLeft")),
+				Integer.parseInt(prop.getProperty("driveMotorBackRight")));
+		ballDrive = new RobotDrive(new CANTalon(Integer.parseInt(prop.getProperty("ballMotor1"))),
+				new CANTalon(Integer.parseInt(prop.getProperty("ballMotor1"))));
+		climbMotor1 = new CANTalon(Integer.parseInt(prop.getProperty("climbMotor1")));
 	}
 
 	/**
