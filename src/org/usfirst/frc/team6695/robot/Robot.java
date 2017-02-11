@@ -20,15 +20,25 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	// motors
+	/**
+	 * Talon SRX motor controller for climbing rope
+	 */
 	CANTalon climbMotor1;
 
-	// Drives
+	/**
+	 * Drive configurations for robot drivetrain
+	 */
 	AlphaDrive frontDrive;
 	AlphaDrive backDrive;
+	
+	/**
+	 * Drive configuration for ball motors
+	 */
 	RobotDrive ballDrive;
 
-	// states
+	/**
+	 * 
+	 */
 	boolean isClimbing = false;
 	boolean bPreviouslyHeld = false;
 
