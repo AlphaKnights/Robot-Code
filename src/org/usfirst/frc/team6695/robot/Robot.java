@@ -158,9 +158,9 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		climbCode();
-		driveCode();
-		ballShooterCode();
+		climb();
+		drive();
+		shoot();
 
 		/**
 		 * Implement xbox controller main button usage
@@ -177,7 +177,7 @@ public class Robot extends IterativeRobot {
 	/**
 	 * Ball Shooter Code
 	 */
-	public void ballShooterCode() {
+	public void shoot() {
 		boolean buttonX = xbox.getRawButton(3);
 		if (buttonX) ballDrive.drive(1.0, 0.0);
 		else ballDrive.drive(0.0, 0.0);
@@ -185,7 +185,7 @@ public class Robot extends IterativeRobot {
 	/**
 	 * Implement robot drive
 	 */
-	public void driveCode() {
+	public void drive() {
 		frontDrive.arcadeDrive(logitechJoy, false, logitechJoy.getThrottle());
 		backDrive.arcadeDrive(logitechJoy, false, logitechJoy.getThrottle());
 	}
@@ -193,7 +193,7 @@ public class Robot extends IterativeRobot {
 	/**
 	 * Climber
 	 */
-	public void climbCode() {
+	public void climb() {
 		if ((xbox.getPOV() == climbButtonSpeedUp) && (climbSpeed <= 1))
 			climbSpeed = climbSpeed + climbInc;
 		if ((xbox.getPOV() == climbButtonSlowDown) && (climbSpeed <= -1))
