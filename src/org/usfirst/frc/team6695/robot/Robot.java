@@ -175,8 +175,8 @@ public class Robot extends IterativeRobot {
 			climbSpeed = climbSpeed + climbInc;
 		if ((xbox.getPOV() == climbButtonSlowDown) && (climbSpeed <= -1))
 			climbSpeed = climbSpeed - climbInc;
-		if (climbMotor1.getOutputCurrent() >= climbMaxCurrent)
-			climbMotor1.set(climbSpeed);
+		if (climbMotor.getOutputCurrent() >= climbMaxCurrent)
+			climbMotor.set(climbSpeed);
 
 		/**
 		 * Implement xbox controller main button usage
