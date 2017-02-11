@@ -7,7 +7,6 @@ import java.util.Properties;
 import com.ctre.CANTalon;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -24,9 +23,9 @@ public class Robot extends IterativeRobot {
 	CANTalon climbMotor1;
 
 	// Drives
-	RobotDrive frontDrive;
-	RobotDrive backDrive;
-	RobotDrive ballDrive;
+	AlphaDrive frontDrive;
+	AlphaDrive backDrive;
+	AlphaDrive ballDrive;
 
 	// states
 	boolean isClimbing = false;
@@ -59,11 +58,11 @@ public class Robot extends IterativeRobot {
 		joystick = new Joystick(Integer.parseInt(config.getProperty("joystick")));
 		xbox = new XboxController(Integer.parseInt(config.getProperty("xbox")));
 		// init drives
-		frontDrive = new RobotDrive(Integer.parseInt(config.getProperty("driveMotorFrontLeft")),
+		frontDrive = new AlphaDrive(Integer.parseInt(config.getProperty("driveMotorFrontLeft")),
 				Integer.parseInt(config.getProperty("driveMotorFrontRight")));
-		backDrive = new RobotDrive(Integer.parseInt(config.getProperty("driveMotorBackLeft")),
+		backDrive = new AlphaDrive(Integer.parseInt(config.getProperty("driveMotorBackLeft")),
 				Integer.parseInt(config.getProperty("driveMotorBackRight")));
-		ballDrive = new RobotDrive(new CANTalon(Integer.parseInt(config.getProperty("ballMotor1"))),
+		ballDrive = new AlphaDrive(new CANTalon(Integer.parseInt(config.getProperty("ballMotor1"))),
 				new CANTalon(Integer.parseInt(config.getProperty("ballMotor1"))));
 		// init motors
 		climbMotor1 = new CANTalon(Integer.parseInt(config.getProperty("climbMotor1")));
@@ -108,7 +107,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopInit() {
-		System.out.println("hilo woild");
+		System.out.println("Hello World");
 	}
 
 	/**
@@ -116,14 +115,11 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		if (!isClimbing) {// If we are not climbing, we are driving
-			frontDrive.arcadeDrive(joystick);
-			backDrive.arcadeDrive(joystick);
-		} else {// we must be climbing
-			if (climbMotor1.getOutputCurrent() < 1.0)
-				climbMotor1.set(joystick.getY() * joystick.getThrottle());
-			// TODO Motor Must stop before we break the button
-		}
+		frontDrive.arcadeDrive(joystick, joystick.getThrottle());
+		backDrive.arcadeDrive(joystick, joystick.getThrottle());
+		if (climbMotor1.getOutputCurrent() < 1.0)
+			climbMotor1.set(joystick.getY() * joystick.getThrottle());
+		// TODO Motor Must stop before we break the button
 
 		boolean buttonA = xbox.getRawButton(1);
 		boolean buttonB = xbox.getRawButton(2);
