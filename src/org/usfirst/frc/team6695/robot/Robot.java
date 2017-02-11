@@ -30,7 +30,7 @@ public class Robot extends IterativeRobot {
 	 */
 	AlphaDrive frontDrive;
 	AlphaDrive backDrive;
-	
+
 	/**
 	 * Drive configuration for ball motors
 	 */
@@ -57,6 +57,11 @@ public class Robot extends IterativeRobot {
 	// config
 	Properties config = new Properties();
 
+	double climbSpeed = 0.0;
+	int climbButtonSpeedUp;
+	int climbButtonSlowDown;
+	double ClimbInc;
+
 	public void configSetup() {
 		try {
 			InputStream input = Robot.class.getResourceAsStream("config.properties");
@@ -82,7 +87,9 @@ public class Robot extends IterativeRobot {
 
 		// init Max
 		climbMaxCurrent = Double.parseDouble(config.getProperty("climbMaxCurrent"));
-
+		climbButtonSpeedUp = Integer.parseInt(config.getProperty("climbButtonSpeedUp"));
+		climbButtonSlowDown = Integer.parseInt(config.getProperty("climbButtonSlowDown"));
+		ClimbInc = Double.parseDouble(config.getProperty("ClimbInc"));
 	}
 
 	/**
@@ -127,9 +134,16 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		frontDrive.arcadeDrive(logitechJoy, false, logitechJoy.getThrottle());
 		backDrive.arcadeDrive(logitechJoy, false, logitechJoy.getThrottle());
-		// if (climbMotor1.getOutputCurrent() < 1.0)
-		// climbMotor1.set(logitechJoy.getY());
-		// TODO Motor Must stop before we break the button
+
+		/**
+		 * Climber
+		 */
+		if ((xbox.getPOV() == climbButtonSpeedUp) && (climbSpeed <= 1))
+			climbSpeed = climbSpeed + ClimbInc;
+		if ((xbox.getPOV() == climbButtonSlowDown) && (climbSpeed <= -1))
+			climbSpeed = climbSpeed - ClimbInc;
+		if (climbMotor1.getOutputCurrent() >= climbMaxCurrent)
+			climbMotor1.set(climbSpeed);
 
 		boolean buttonA = xbox.getRawButton(1);
 		boolean buttonB = xbox.getRawButton(2);
