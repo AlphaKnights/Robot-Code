@@ -24,7 +24,10 @@ public class Robot extends IterativeRobot {
 	 * Talon SRX motor controller for climbing rope
 	 */
 	CANTalon climbMotor;
-
+	/**
+	 * Talon SRX motor controller for ball belt
+	 */
+	CANTalon beltMotor;
 	/**
 	 * Drive configurations for front robot drivetrain
 	 */
@@ -58,10 +61,16 @@ public class Robot extends IterativeRobot {
 	XboxController xbox;
 
 	/**
-	 * Controls ball hopper stirring state
+	 * Controls ball hopper belt state
 	 */
-	boolean isStirring = false;
+	boolean isBelting = false;
+	boolean prevBeltButton = false;
+	double beltSpeed;
+	int beltButton;
 	
+	int ballShootButton;
+	int ballLowerSpeedButton;
+	int ballFasterSpeedButton;
 	// TODO Implement timers
 	//     Timer myTimer = new Timer();
 	//	   myTimer.start();
@@ -124,6 +133,13 @@ public class Robot extends IterativeRobot {
 		climbInc = Double.parseDouble(config.getProperty("climbInc"));
 		baseBallThrottle = Double.parseDouble(config.getProperty("baseBallThrottle"));
 		deltaBallThrottle = Double.parseDouble(config.getProperty("deltaBallThrottle"));
+		beltSpeed=Double.parseDouble(config.getProperty("beltSpeed"));
+		beltButton=Integer.parseInt(config.getProperty("beltButton"));
+		ballShootButton = Integer.parseInt(config.getProperty("ballShootButton"));
+		ballLowerSpeedButton = Integer.parseInt(config.getProperty("ballLowerSpeedButton"));
+		ballFasterSpeedButton = Integer.parseInt(config.getProperty("ballFasterSpeedButton"));
+		
+		
 	}
 
 	/**
@@ -169,15 +185,14 @@ public class Robot extends IterativeRobot {
 		climb();
 		drive();
 		shoot();
+		ballConveyorBelt();
 
 		/**
 		 * Implement xbox controller main button usage
 		 */
 		boolean buttonA = xbox.getRawButton(1);
 		boolean buttonB = xbox.getRawButton(2);
-		boolean buttonY = xbox.getRawButton(4);
 
-		if (buttonY) System.out.println("pressedY");
 		if (buttonA) System.out.println("pressedA");
 		if (buttonB) System.out.println("pressedB");
 	}
@@ -186,20 +201,21 @@ public class Robot extends IterativeRobot {
 	 * Ball Shooter Code
 	 */
 	public void shoot() {
-		boolean buttonX = xbox.getRawButton(3);
-		boolean buttonLB = xbox.getRawButton(5);
-		boolean buttonRB = xbox.getRawButton(6);
-		if (buttonLB) ballThrottle -= deltaBallThrottle;
-		if (buttonRB) ballThrottle += deltaBallThrottle;
-		if (buttonX) ballDrive.drive(ballThrottle, 0.0);
+		boolean ballShoot = xbox.getRawButton(ballShootButton);
+		boolean lowerSpeed = xbox.getRawButton(ballLowerSpeedButton);
+		boolean fasterSpeed = xbox.getRawButton(ballFasterSpeedButton);
+		if (lowerSpeed) ballThrottle -= deltaBallThrottle;
+		if (fasterSpeed) ballThrottle += deltaBallThrottle;
+		if (ballShoot) ballDrive.drive(ballThrottle, 0.0);
 		else ballDrive.drive(0.0, 0.0);
 	}
 	/**
 	 * Implement robot drive
+	 * pressing trigger button will x^2 inputs, so .5 speed turns to .25 (For momentary precise control)
 	 */
 	public void drive() {
-		frontDrive.arcadeDrive(logitechJoy, false, logitechJoy.getThrottle());
-		backDrive.arcadeDrive(logitechJoy, false, logitechJoy.getThrottle());
+		frontDrive.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
+		backDrive.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
 	}
 
 	/**
@@ -212,6 +228,19 @@ public class Robot extends IterativeRobot {
 			climbSpeed = climbSpeed - climbInc;
 		if (climbMotor.getOutputCurrent() >= climbMaxCurrent)
 			climbMotor.set(climbSpeed);
+	}
+	/**
+	 * Ball Conveyer Belt
+	 */
+	public void ballConveyorBelt() {
+		//check for toggle of belt button
+		boolean button = xbox.getRawButton(beltButton);
+		if(button) prevBeltButton = true;
+		else prevBeltButton = false;
+		if(button && !prevBeltButton) isBelting = !isBelting;
+		//turn on and off belt motor
+		if(isBelting) beltMotor.set(beltSpeed);
+		else beltMotor.set(0.0);
 	}
 	/**
 	 * This function is called periodically during test mode
