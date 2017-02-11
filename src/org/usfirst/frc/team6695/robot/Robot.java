@@ -60,7 +60,7 @@ public class Robot extends IterativeRobot {
 	double climbSpeed = 0.0;
 	int climbButtonSpeedUp;
 	int climbButtonSlowDown;
-	double ClimbInc;
+	double climbInc;
 
 	public void configSetup() {
 		try {
@@ -89,7 +89,7 @@ public class Robot extends IterativeRobot {
 		climbMaxCurrent = Double.parseDouble(config.getProperty("climbMaxCurrent"));
 		climbButtonSpeedUp = Integer.parseInt(config.getProperty("climbButtonSpeedUp"));
 		climbButtonSlowDown = Integer.parseInt(config.getProperty("climbButtonSlowDown"));
-		ClimbInc = Double.parseDouble(config.getProperty("ClimbInc"));
+		climbInc = Double.parseDouble(config.getProperty("climbInc"));
 	}
 
 	/**
@@ -139,9 +139,9 @@ public class Robot extends IterativeRobot {
 		 * Climber
 		 */
 		if ((xbox.getPOV() == climbButtonSpeedUp) && (climbSpeed <= 1))
-			climbSpeed = climbSpeed + ClimbInc;
+			climbSpeed = climbSpeed + climbInc;
 		if ((xbox.getPOV() == climbButtonSlowDown) && (climbSpeed <= -1))
-			climbSpeed = climbSpeed - ClimbInc;
+			climbSpeed = climbSpeed - climbInc;
 		if (climbMotor1.getOutputCurrent() >= climbMaxCurrent)
 			climbMotor1.set(climbSpeed);
 
