@@ -71,10 +71,15 @@ public class Robot extends IterativeRobot {
 	 * @see "config.properties"
 	 */
 	Properties config = new Properties();
-  double climbSpeed = 0.0;
+	
+	// TODO document variables
+	double climbSpeed = 0.0;
 	int climbButtonSpeedUp;
 	int climbButtonSlowDown;
 	double climbInc;
+	double baseBallThrottle;
+	double deltaBallThrottle;
+	double ballThrottle;
   /**
 	 * Initialize instance variables from property file
 	 * @see "config.properties"
@@ -117,6 +122,8 @@ public class Robot extends IterativeRobot {
 		climbButtonSpeedUp = Integer.parseInt(config.getProperty("climbButtonSpeedUp"));
 		climbButtonSlowDown = Integer.parseInt(config.getProperty("climbButtonSlowDown"));
 		climbInc = Double.parseDouble(config.getProperty("climbInc"));
+		baseBallThrottle = Double.parseDouble(config.getProperty("baseBallThrottle"));
+		deltaBallThrottle = Double.parseDouble(config.getProperty("deltaBallThrottle"));
 	}
 
 	/**
@@ -151,6 +158,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopInit() {
 		System.out.println("Hello World");
+		ballThrottle = baseBallThrottle;
 	}
 
 	/**
@@ -181,7 +189,9 @@ public class Robot extends IterativeRobot {
 		boolean buttonX = xbox.getRawButton(3);
 		boolean buttonLB = xbox.getRawButton(5);
 		boolean buttonRB = xbox.getRawButton(6);
-		if (buttonX) ballDrive.drive(1.0, 0.0);
+		if (buttonLB) ballThrottle -= deltaBallThrottle;
+		if (buttonRB) ballThrottle += deltaBallThrottle;
+		if (buttonX) ballDrive.drive(ballThrottle, 0.0);
 		else ballDrive.drive(0.0, 0.0);
 	}
 	/**
