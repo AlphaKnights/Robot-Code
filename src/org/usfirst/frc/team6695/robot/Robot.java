@@ -23,12 +23,15 @@ public class Robot extends IterativeRobot {
 	/**
 	 * Talon SRX motor controller for climbing rope
 	 */
-	CANTalon climbMotor1;
+	CANTalon climbMotor;
 
 	/**
-	 * Drive configurations for robot drivetrain
+	 * Drive configurations for front robot drivetrain
 	 */
 	AlphaDrive frontDrive;
+	/**
+	 * Drive configurations for back robot drivetrain
+	 */
 	AlphaDrive backDrive;
 
 	/**
@@ -37,31 +40,49 @@ public class Robot extends IterativeRobot {
 	RobotDrive ballDrive;
 
 	/**
-	 * 
+	 * Controls climbing state
 	 */
 	boolean isClimbing = false;
+	/**
+	 * Modifies climbing power
+	 */
+	double climbMaxCurrent;
+	/**
+	 * Modifies climbing state
+	 */
 	boolean bPreviouslyHeld = false;
 
-	// Control Input
+	/**
+	 * Package for joystick control scheme
+	 */
 	Joystick logitechJoy;
+	/**
+	 * Package for xbox controller control scheme
+	 */
 	XboxController xbox;
 
-	// Speeds
-	boolean isStirring;
-
-	// max
-	double climbMaxCurrent;
-	// timers
-	Timer timer = new Timer();
-
-	// config
+	/**
+	 * Controls ball hopper stirring state
+	 */
+	boolean isStirring = false;
+	
+	// TODO Implement timers
+	//     Timer myTimer = new Timer();
+	//	   myTimer.start();
+	
+	/**
+	 * Configures property file
+	 * @see "config.properties"
+	 */
 	Properties config = new Properties();
-
-	double climbSpeed = 0.0;
+  double climbSpeed = 0.0;
 	int climbButtonSpeedUp;
 	int climbButtonSlowDown;
 	double climbInc;
-
+  /**
+	 * Initialize instance variables from property file
+	 * @see "config.properties"
+	 */
 	public void configSetup() {
 		try {
 			InputStream input = Robot.class.getResourceAsStream("config.properties");
@@ -70,22 +91,32 @@ public class Robot extends IterativeRobot {
 			System.err.println("Could Not Read config");
 			e.printStackTrace();
 		}
-		// init inputs
+		/**
+		 * Initialize joystick and xbox controller input
+		 */
 		logitechJoy = new Joystick(Integer.parseInt(config.getProperty("joystick")));
 		xbox = new XboxController(Integer.parseInt(config.getProperty("xbox")));
-		// init drives
+		
+		/**
+		 * Initialize robot drivetrain configuration
+		 */
 		frontDrive = new AlphaDrive(Integer.parseInt(config.getProperty("driveMotorFrontLeft")),
 				Integer.parseInt(config.getProperty("driveMotorFrontRight")));
 		backDrive = new AlphaDrive(Integer.parseInt(config.getProperty("driveMotorBackLeft")),
 				Integer.parseInt(config.getProperty("driveMotorBackRight")));
+		/**
+		 * Initialize ball launcher motor configuration
+		 */
 		ballDrive = new RobotDrive(new CANTalon(Integer.parseInt(config.getProperty("ballMotor1"))),
-				new CANTalon(Integer.parseInt(config.getProperty("ballMotor1"))));
-		// init motors
-		climbMotor1 = new CANTalon(Integer.parseInt(config.getProperty("climbMotor1")));
-
-		isStirring = Boolean.parseBoolean(config.getProperty("stir"));
-
-		// init Max
+				new CANTalon(Integer.parseInt(config.getProperty("ballMotor2"))));
+		
+		/**
+		 * Initialize climbing mechanism motor configuration
+		 */
+		climbMotor = new CANTalon(Integer.parseInt(config.getProperty("climbMotor")));
+		/**
+		 * Configure climbing mechanism maximum power draw
+		 */
 		climbMaxCurrent = Double.parseDouble(config.getProperty("climbMaxCurrent"));
 		climbButtonSpeedUp = Integer.parseInt(config.getProperty("climbButtonSpeedUp"));
 		climbButtonSlowDown = Integer.parseInt(config.getProperty("climbButtonSlowDown"));
@@ -106,8 +137,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		timer.reset();
-		timer.start();
+		// TODO Implement Timer
 	}
 
 	/**
@@ -132,6 +162,9 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		/**
+		 * Implement robot drive
+		 */
 		frontDrive.arcadeDrive(logitechJoy, false, logitechJoy.getThrottle());
 		backDrive.arcadeDrive(logitechJoy, false, logitechJoy.getThrottle());
 
@@ -145,39 +178,29 @@ public class Robot extends IterativeRobot {
 		if (climbMotor1.getOutputCurrent() >= climbMaxCurrent)
 			climbMotor1.set(climbSpeed);
 
+		/**
+		 * Implement xbox controller main button usage
+		 */
 		boolean buttonA = xbox.getRawButton(1);
 		boolean buttonB = xbox.getRawButton(2);
 		boolean buttonX = xbox.getRawButton(3);
 		boolean buttonY = xbox.getRawButton(4);
 
-		if (buttonB && !bPreviouslyHeld) {// if b is clicked, we are in climbing
-											// mode
+		if (buttonB && !bPreviouslyHeld) {
+			// Toggle Climbing mode
 			isClimbing = !isClimbing;
 			System.out.println("Current Climbing State: " + isClimbing);
 		}
-		// So holding down the button does not rapidly switch between climbing
-		// and driving
-		if (buttonB)
-			bPreviouslyHeld = true;
-		else
-			bPreviouslyHeld = false;
+		
+		if (buttonB) bPreviouslyHeld = true;
+		else bPreviouslyHeld = false;
 
-		if (buttonX) {// if we hold x, ball shooter should shoot.
-			System.out.println("pressedX");
-			ballDrive.drive(1.0, 0.0);
-		} else {
-			ballDrive.drive(0.0, 0.0);
-		}
+		if (buttonX) ballDrive.drive(1.0, 0.0);
+		else ballDrive.drive(0.0, 0.0);
 
-		if (buttonY) {
-			System.out.println("pressedY");
-		}
-		if (buttonA) {
-			System.out.println("pressedA");
-		}
-		if (buttonB) {
-			System.out.println("pressedB");
-		}
+		if (buttonY) System.out.println("pressedY");
+		if (buttonA) System.out.println("pressedA");
+		if (buttonB) System.out.println("pressedB");
 	}
 
 	/**
