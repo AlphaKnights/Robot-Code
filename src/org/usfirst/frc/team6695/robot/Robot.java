@@ -7,6 +7,7 @@ import java.util.Properties;
 import com.ctre.CANTalon;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -25,18 +26,18 @@ public class Robot extends IterativeRobot {
 	// Drives
 	AlphaDrive frontDrive;
 	AlphaDrive backDrive;
-	AlphaDrive ballDrive;
+	RobotDrive ballDrive;
 
 	// states
 	boolean isClimbing = false;
 	boolean bPreviouslyHeld = false;
 
 	// Control Input
-	Joystick joystick;
+	Joystick logitechJoy;
 	XboxController xbox;
 
 	// Speeds
-	double stirSpeed;
+	boolean isStirring;
 
 	// max
 	double climbMaxCurrent;
@@ -55,20 +56,19 @@ public class Robot extends IterativeRobot {
 			e.printStackTrace();
 		}
 		// init inputs
-		joystick = new Joystick(Integer.parseInt(config.getProperty("joystick")));
+		logitechJoy = new Joystick(Integer.parseInt(config.getProperty("joystick")));
 		xbox = new XboxController(Integer.parseInt(config.getProperty("xbox")));
 		// init drives
 		frontDrive = new AlphaDrive(Integer.parseInt(config.getProperty("driveMotorFrontLeft")),
 				Integer.parseInt(config.getProperty("driveMotorFrontRight")));
 		backDrive = new AlphaDrive(Integer.parseInt(config.getProperty("driveMotorBackLeft")),
 				Integer.parseInt(config.getProperty("driveMotorBackRight")));
-		ballDrive = new AlphaDrive(new CANTalon(Integer.parseInt(config.getProperty("ballMotor1"))),
+		ballDrive = new RobotDrive(new CANTalon(Integer.parseInt(config.getProperty("ballMotor1"))),
 				new CANTalon(Integer.parseInt(config.getProperty("ballMotor1"))));
 		// init motors
 		climbMotor1 = new CANTalon(Integer.parseInt(config.getProperty("climbMotor1")));
 
-		// init speeds
-		stirSpeed = Double.parseDouble(config.getProperty("stirSpeed"));
+		isStirring = Boolean.parseBoolean(config.getProperty("stir"));
 
 		// init Max
 		climbMaxCurrent = Double.parseDouble(config.getProperty("climbMaxCurrent"));
@@ -115,10 +115,10 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		frontDrive.arcadeDrive(joystick, joystick.getThrottle());
-		backDrive.arcadeDrive(joystick, joystick.getThrottle());
-		if (climbMotor1.getOutputCurrent() < 1.0)
-			climbMotor1.set(joystick.getY() * joystick.getThrottle());
+		frontDrive.arcadeDrive(logitechJoy, false, logitechJoy.getThrottle());
+		backDrive.arcadeDrive(logitechJoy, false, logitechJoy.getThrottle());
+		// if (climbMotor1.getOutputCurrent() < 1.0)
+		// climbMotor1.set(logitechJoy.getY());
 		// TODO Motor Must stop before we break the button
 
 		boolean buttonA = xbox.getRawButton(1);
