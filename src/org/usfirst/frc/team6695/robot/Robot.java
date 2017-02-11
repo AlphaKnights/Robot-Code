@@ -8,7 +8,7 @@ import com.ctre.CANTalon;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
-import edu.wpi.first.wpilibj.Timer;
+// TODO import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
@@ -179,6 +179,8 @@ public class Robot extends IterativeRobot {
 	 */
 	public void shoot() {
 		boolean buttonX = xbox.getRawButton(3);
+		boolean buttonLB = xbox.getRawButton(5);
+		boolean buttonRB = xbox.getRawButton(6);
 		if (buttonX) ballDrive.drive(1.0, 0.0);
 		else ballDrive.drive(0.0, 0.0);
 	}
