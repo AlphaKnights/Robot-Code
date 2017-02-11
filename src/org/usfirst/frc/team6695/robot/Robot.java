@@ -33,7 +33,7 @@ public class Robot extends IterativeRobot {
 	 * Drive configurations for back robot drivetrain
 	 */
 	AlphaDrive backDrive;
-	
+
 	/**
 	 * Drive configuration for ball motors
 	 */
@@ -75,8 +75,11 @@ public class Robot extends IterativeRobot {
 	 * @see "config.properties"
 	 */
 	Properties config = new Properties();
-
-	/**
+  double climbSpeed = 0.0;
+	int climbButtonSpeedUp;
+	int climbButtonSlowDown;
+	double climbInc;
+  /**
 	 * Initialize instance variables from property file
 	 * @see "config.properties"
 	 */
@@ -115,6 +118,9 @@ public class Robot extends IterativeRobot {
 		 * Configure climbing mechanism maximum power draw
 		 */
 		climbMaxCurrent = Double.parseDouble(config.getProperty("climbMaxCurrent"));
+		climbButtonSpeedUp = Integer.parseInt(config.getProperty("climbButtonSpeedUp"));
+		climbButtonSlowDown = Integer.parseInt(config.getProperty("climbButtonSlowDown"));
+		climbInc = Double.parseDouble(config.getProperty("climbInc"));
 	}
 
 	/**
@@ -161,6 +167,16 @@ public class Robot extends IterativeRobot {
 		 */
 		frontDrive.arcadeDrive(logitechJoy, false, logitechJoy.getThrottle());
 		backDrive.arcadeDrive(logitechJoy, false, logitechJoy.getThrottle());
+
+		/**
+		 * Climber
+		 */
+		if ((xbox.getPOV() == climbButtonSpeedUp) && (climbSpeed <= 1))
+			climbSpeed = climbSpeed + climbInc;
+		if ((xbox.getPOV() == climbButtonSlowDown) && (climbSpeed <= -1))
+			climbSpeed = climbSpeed - climbInc;
+		if (climbMotor1.getOutputCurrent() >= climbMaxCurrent)
+			climbMotor1.set(climbSpeed);
 
 		/**
 		 * Implement xbox controller main button usage
