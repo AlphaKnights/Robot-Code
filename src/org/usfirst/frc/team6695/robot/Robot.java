@@ -47,10 +47,6 @@ public class Robot extends IterativeRobot {
 	 * Modifies climbing power
 	 */
 	double climbMaxCurrent;
-	/**
-	 * Modifies climbing state
-	 */
-	boolean bPreviouslyHeld = false;
 
 	/**
 	 * Package for joystick control scheme
@@ -162,50 +158,53 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		/**
-		 * Implement robot drive
-		 */
-		frontDrive.arcadeDrive(logitechJoy, false, logitechJoy.getThrottle());
-		backDrive.arcadeDrive(logitechJoy, false, logitechJoy.getThrottle());
-
-		/**
-		 * Climber
-		 */
-		if ((xbox.getPOV() == climbButtonSpeedUp) && (climbSpeed <= 1))
-			climbSpeed = climbSpeed + climbInc;
-		if ((xbox.getPOV() == climbButtonSlowDown) && (climbSpeed <= -1))
-			climbSpeed = climbSpeed - climbInc;
-		if (climbMotor.getOutputCurrent() >= climbMaxCurrent)
-			climbMotor.set(climbSpeed);
+		climbCode();
+		driveCode();
+		ballShooterCode();
 
 		/**
 		 * Implement xbox controller main button usage
 		 */
 		boolean buttonA = xbox.getRawButton(1);
 		boolean buttonB = xbox.getRawButton(2);
-		boolean buttonX = xbox.getRawButton(3);
 		boolean buttonY = xbox.getRawButton(4);
-
-		if (buttonB && !bPreviouslyHeld) {
-			// Toggle Climbing mode
-			isClimbing = !isClimbing;
-			System.out.println("Current Climbing State: " + isClimbing);
-		}
-		
-		if (buttonB) bPreviouslyHeld = true;
-		else bPreviouslyHeld = false;
-
-		if (buttonX) ballDrive.drive(1.0, 0.0);
-		else ballDrive.drive(0.0, 0.0);
 
 		if (buttonY) System.out.println("pressedY");
 		if (buttonA) System.out.println("pressedA");
 		if (buttonB) System.out.println("pressedB");
 	}
+	
+	/**
+	 * Ball Shooter Code
+	 */
+	public void ballShooterCode() {
+		boolean buttonX = xbox.getRawButton(3);
+		if (buttonX) ballDrive.drive(1.0, 0.0);
+		else ballDrive.drive(0.0, 0.0);
+	}
+	/**
+	 * Implement robot drive
+	 */
+	public void driveCode() {
+		frontDrive.arcadeDrive(logitechJoy, false, logitechJoy.getThrottle());
+		backDrive.arcadeDrive(logitechJoy, false, logitechJoy.getThrottle());
+	}
 
+	/**
+	 * Climber
+	 */
+	public void climbCode() {
+		if ((xbox.getPOV() == climbButtonSpeedUp) && (climbSpeed <= 1))
+			climbSpeed = climbSpeed + climbInc;
+		if ((xbox.getPOV() == climbButtonSlowDown) && (climbSpeed <= -1))
+			climbSpeed = climbSpeed - climbInc;
+		if (climbMotor.getOutputCurrent() >= climbMaxCurrent)
+			climbMotor.set(climbSpeed);
+	}
 	/**
 	 * This function is called periodically during test mode
 	 */
+	
 	@Override
 	public void testPeriodic() {
 		LiveWindow.run();
