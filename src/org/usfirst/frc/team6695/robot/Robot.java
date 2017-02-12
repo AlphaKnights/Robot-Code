@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import com.ctre.CANTalon;
+
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
@@ -29,14 +31,16 @@ public class Robot extends IterativeRobot {
 	 */
 	CANTalon beltMotor;
 	/**
-	 * Drive configurations for front robot drivetrain
+	 * Drive configuration for robot drivetrain
 	 */
-	AlphaDrive frontDrive;
-	/**
-	 * Drive configurations for back robot drivetrain
-	 */
-	AlphaDrive backDrive;
-
+	AlphaDrive drivetrain;
+	// sample encoder code
+	Encoder leftChannelEnc = new Encoder(0, 1, false, Encoder.EncodingType.k2X);
+	Encoder rightChannelEnc = new Encoder(2, 3, false, Encoder.EncodingType.k2X);
+	int avgCount;
+	double avgLinearDistance;
+	double avgSpeed;
+	
 	/**
 	 * Drive configuration for ball motors
 	 */
@@ -66,11 +70,12 @@ public class Robot extends IterativeRobot {
 	boolean isBelting = false;
 	boolean prevBeltButton = false;
 	double beltSpeed;
-	int beltButton;
 	
+	int beltButton;
 	int ballShootButton;
 	int ballLowerSpeedButton;
 	int ballFasterSpeedButton;
+	
 	// TODO Implement timers
 	//     Timer myTimer = new Timer();
 	//	   myTimer.start();
@@ -81,15 +86,22 @@ public class Robot extends IterativeRobot {
 	 */
 	Properties config = new Properties();
 	
-	// TODO document variables
+	/**
+	 * Container and modifiers for climbing mechanism speed
+	 */
 	double climbSpeed = 0.0;
 	int climbButtonSpeedUp;
 	int climbButtonSlowDown;
 	double climbInc;
+	
+	/**
+	 * Container and modifiers for ball launching mechanism speed
+	 */
 	double baseBallThrottle;
 	double deltaBallThrottle;
 	double ballThrottle;
-  /**
+	
+	/**
 	 * Initialize instance variables from property file
 	 * @see "config.properties"
 	 */
@@ -110,10 +122,8 @@ public class Robot extends IterativeRobot {
 		/**
 		 * Initialize robot drivetrain configuration
 		 */
-		frontDrive = new AlphaDrive(Integer.parseInt(config.getProperty("driveMotorFrontLeft")),
-				Integer.parseInt(config.getProperty("driveMotorFrontRight")));
-		backDrive = new AlphaDrive(Integer.parseInt(config.getProperty("driveMotorBackLeft")),
-				Integer.parseInt(config.getProperty("driveMotorBackRight")));
+		drivetrain = new AlphaDrive(Integer.parseInt(config.getProperty("driveMotorLeftChannel")),
+				Integer.parseInt(config.getProperty("driveMotorRightChannel")));
 		/**
 		 * Initialize ball launcher motor configuration
 		 */
@@ -133,13 +143,11 @@ public class Robot extends IterativeRobot {
 		climbInc = Double.parseDouble(config.getProperty("climbInc"));
 		baseBallThrottle = Double.parseDouble(config.getProperty("baseBallThrottle"));
 		deltaBallThrottle = Double.parseDouble(config.getProperty("deltaBallThrottle"));
-		beltSpeed=Double.parseDouble(config.getProperty("beltSpeed"));
-		beltButton=Integer.parseInt(config.getProperty("beltButton"));
-		ballShootButton = Integer.parseInt(config.getProperty("ballShootButton"));
-		ballLowerSpeedButton = Integer.parseInt(config.getProperty("ballLowerSpeedButton"));
-		ballFasterSpeedButton = Integer.parseInt(config.getProperty("ballFasterSpeedButton"));
-		
-		
+		beltSpeed = Double.parseDouble(config.getProperty("beltSpeed"));
+		beltButton = XboxButtonID.valueOf(config.getProperty("beltButton")).value();
+		ballShootButton = XboxButtonID.valueOf(config.getProperty("ballShootButton")).value();
+		ballLowerSpeedButton = XboxButtonID.valueOf(config.getProperty("ballLowerSpeedButton")).value();
+		ballFasterSpeedButton = XboxButtonID.valueOf(config.getProperty("ballFasterSpeedButton")).value();
 	}
 
 	/**
@@ -165,6 +173,9 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {
 		// TODO Make Autonomous work...
+		avgCount = (leftChannelEnc.get() + rightChannelEnc.get()) / 2;
+		avgLinearDistance = (leftChannelEnc.getDistance() + rightChannelEnc.getDistance()) / 2;
+		avgSpeed = (leftChannelEnc.getRate() + rightChannelEnc.getRate()) / 2;
 	}
 
 	/**
@@ -211,11 +222,11 @@ public class Robot extends IterativeRobot {
 	}
 	/**
 	 * Implement robot drive
-	 * pressing trigger button will x^2 inputs, so .5 speed turns to .25 (For momentary precise control)
+	 * Pressing trigger button will sqaure inputs
+	 * i.e. 0.5 speed turns to .25 (For momentary precise control)
 	 */
 	public void drive() {
-		frontDrive.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
-		backDrive.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
+		drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
 	}
 
 	/**
