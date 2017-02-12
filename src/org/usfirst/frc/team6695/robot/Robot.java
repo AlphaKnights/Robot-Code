@@ -111,7 +111,7 @@ public class Robot extends IterativeRobot {
 			//InputStream input = getClass().getResourceAsStream("config.properties");
 			//InputStream input = getClass().getResourceAsStream("\config.properties");	
 			//InputStream input = getClass().getResourceAsStream("/config.properties");
-			InputStream input = this.getClass().getResourceAsStream("/config.properties");
+			InputStream input = Robot.class.getResourceAsStream("config.properties");
 			//InputStream input = getClass().getResourceAsStream("./config.properties");
 			config.load(input);
 		} catch (IOException e) {
