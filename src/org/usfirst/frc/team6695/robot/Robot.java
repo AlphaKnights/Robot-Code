@@ -106,8 +106,13 @@ public class Robot extends IterativeRobot {
 	 * @see "config.properties"
 	 */
 	public void configSetup() {
+		System.out.println("Starting UP");
 		try {
-			InputStream input = Robot.class.getResourceAsStream("config.properties");
+			//InputStream input = getClass().getResourceAsStream("config.properties");
+			//InputStream input = getClass().getResourceAsStream("\config.properties");	
+			//InputStream input = getClass().getResourceAsStream("/config.properties");
+			InputStream input = this.getClass().getResourceAsStream("/config.properties");
+			//InputStream input = getClass().getResourceAsStream("./config.properties");
 			config.load(input);
 		} catch (IOException e) {
 			System.err.println("Could Not Read config");
