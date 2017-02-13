@@ -1,7 +1,7 @@
 package org.usfirst.frc.team6695.robot;
 /**
  * Human Readable Version of xbox keys
- * @author Pasha
+ * @author Alpha Knights
  * @see XboxPOVID 
  */
 public enum XboxButtonID {

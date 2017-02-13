@@ -1,7 +1,7 @@
 package org.usfirst.frc.team6695.robot;
 /**
  * Human Readable xbox pov values.
- * @author Pasha
+ * @author Alpha Knights
  * @see XboxButtonID
  */
 public enum XboxPOVID {

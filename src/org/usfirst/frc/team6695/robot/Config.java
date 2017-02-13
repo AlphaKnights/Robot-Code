@@ -1,7 +1,9 @@
 package org.usfirst.frc.team6695.robot;
+
 /**
  * Class that holds all the unchanging config values
- * @author Michael
+ * 
+ * @author Alpha Knights
  *
  */
 public class Config {

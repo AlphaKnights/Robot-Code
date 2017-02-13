@@ -5,26 +5,53 @@ import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.hal.HAL;
 import edu.wpi.first.wpilibj.hal.FRCNetComm.tInstances;
 import edu.wpi.first.wpilibj.hal.FRCNetComm.tResourceType;
+
 /**
  * Alpha Knights version of Robot Drive
+ * 
  * @see RobotDrive
- * @author Michael
- * @author Pasha
- * @author Alex
- *
+ * @author Alpha Knights
  */
 public class AlphaDrive extends RobotDrive {
-
+	/**
+	 * This just calls the super class...
+	 * 
+	 * @param leftMotorChannel
+	 *            left motor DIO port
+	 * @param rightMotorChannel
+	 *            right motor DIO port
+	 */
 	public AlphaDrive(int leftMotorChannel, int rightMotorChannel) {
 		super(leftMotorChannel, rightMotorChannel);
-		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * Arcade Drive With Throttle
+	 * 
+	 * @param stick
+	 *            the joystick
+	 * @param squaredInputs
+	 *            add more control
+	 * @param throttle
+	 *            multiplied by speed. 0 to 1
+	 */
 	public void arcadeDrive(GenericHID stick, boolean squaredInputs, double throttle) {
 		// simply call the full-featured arcadeDrive with the appropriate values
 		arcadeDrive(stick.getY(), stick.getX(), squaredInputs, throttle);
 	}
 
+	/**
+	 * This is the arcade drive with code in it! Yay!
+	 * 
+	 * @param moveValue
+	 *            stick y
+	 * @param rotateValue
+	 *            stick x
+	 * @param squaredInputs
+	 *            extra control
+	 * @param throttle
+	 *            multiplied by speed. 0 to 1
+	 */
 	public void arcadeDrive(double moveValue, double rotateValue, boolean squaredInputs, double throttle) {
 		// local variables to hold the computed PWM values for the motors
 		if (!kArcadeStandard_Reported) {
