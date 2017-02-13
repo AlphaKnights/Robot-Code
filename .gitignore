@@ -1,6 +1,7 @@
 #Files we dont want...
 /build
 /bin
+/dist
 
 # Windows image file caches
 Thumbs.db
