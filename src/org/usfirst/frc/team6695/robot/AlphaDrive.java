@@ -17,9 +17,9 @@ public class AlphaDrive extends RobotDrive {
 	 * This just calls the super class...
 	 * 
 	 * @param leftMotorChannel
-	 *            left motor DIO port
+	 *            left motor PWM port
 	 * @param rightMotorChannel
-	 *            right motor DIO port
+	 *            right motor PWM port
 	 */
 	public AlphaDrive(int leftMotorChannel, int rightMotorChannel) {
 		super(leftMotorChannel, rightMotorChannel);
@@ -67,8 +67,7 @@ public class AlphaDrive extends RobotDrive {
 
 		if (squaredInputs) {
 			// square the inputs (while preserving the sign) to increase fine
-			// control
-			// while permitting full power
+			// control while permitting full power
 			if (moveValue >= 0.0) {
 				moveValue = moveValue * moveValue;
 			} else {
