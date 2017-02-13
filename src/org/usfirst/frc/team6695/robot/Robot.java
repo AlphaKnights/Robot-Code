@@ -18,17 +18,11 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	/**
-	 * Talon SRX motor controller for climbing rope
-	 */
+	/** Talon SRX motor controller for climbing rope */
 	CANTalon climbMotor;
-	/**
-	 * Talon SRX motor controller for ball belt
-	 */
+	/** Talon SRX motor controller for ball belt */
 	CANTalon beltMotor;
-	/**
-	 * Drive configuration for robot drivetrain
-	 */
+	/** Drive configuration for robot drivetrain */
 	AlphaDrive drivetrain;
 	// sample encoder code
 	Encoder leftChannelEnc = new Encoder(0, 1, false, Encoder.EncodingType.k2X);
@@ -36,101 +30,50 @@ public class Robot extends IterativeRobot {
 	int avgCount;
 	double avgLinearDistance;
 	double avgSpeed;
-	
-	/**
-	 * Drive configuration for ball motors
-	 */
+
+	/** Drive configuration for ball motors */
 	RobotDrive ballDrive;
 
-	/**
-	 * Controls climbing state
-	 */
+	/** Controls climbing state */
 	boolean isClimbing = false;
-	/**
-	 * Modifies climbing power
-	 */
-	double climbMaxCurrent;
 
-	/**
-	 * Package for joystick control scheme
-	 */
+	/** Package for joystick control scheme */
 	Joystick logitechJoy;
-	/**
-	 * Package for xbox controller control scheme
-	 */
+	/** Package for xbox controller control scheme */
 	XboxController xbox;
 
-	/**
-	 * Controls ball hopper belt state
-	 */
+	/** Controls ball hopper belt state */
 	boolean isBelting = false;
 	boolean prevBeltButton = false;
-	double beltSpeed;
-	
-	int beltButton;
-	int ballShootButton;
-	int ballLowerSpeedButton;
-	int ballFasterSpeedButton;
-	
+
 	// TODO Implement timers
-	//     Timer myTimer = new Timer();
-	//	   myTimer.start();
-	
-	/**
-	 * Container and modifiers for climbing mechanism speed
-	 */
+	// Timer myTimer = new Timer();
+	// myTimer.start();
+
+	/** Container and modifiers for climbing mechanism speed */
 	double climbSpeed = 0.0;
-	int climbButtonSpeedUp;
-	int climbButtonSlowDown;
-	double climbInc;
-	
-	/**
-	 * Container and modifiers for ball launching mechanism speed
-	 */
-	double baseBallThrottle;
-	double deltaBallThrottle;
+	/** Container and modifiers for ball launching mechanism speed */
 	double ballThrottle;
-	
+
 	/**
 	 * Initialize instance variables from property file
+	 * 
 	 * @see "config.properties"
 	 */
 	public void configSetup() {
 		System.out.println("Starting UP");
-		/**
-		 * Initialize joystick and xbox controller input
-		 */
+		/** Initialize joystick and xbox controller input */
 		logitechJoy = new Joystick(Config.joystick);
 		xbox = new XboxController(Config.xbox);
-		
-		/**
-		 * Initialize robot drivetrain configuration
-		 */
-		drivetrain = new AlphaDrive(Config.driveMotorLeftChannel,Config.driveMotorRightChannel);
-		/**
-		 * Initialize ball launcher motor configuration
-		 */
-		ballDrive = new RobotDrive(new CANTalon(Config.ballMotor1),
-				new CANTalon(Config.ballMotor2));
-		
-		/**
-		 * Initialize climbing mechanism motor configuration
-		 */
+
+		/** Initialize robot drivetrain configuration */
+		drivetrain = new AlphaDrive(Config.driveMotorLeftChannel, Config.driveMotorRightChannel);
+		/** Initialize ball launcher motor configuration */
+		ballDrive = new RobotDrive(new CANTalon(Config.ballMotor1), new CANTalon(Config.ballMotor2));
+
+		/** Initialize climbing mechanism motor configuration */
 		climbMotor = new CANTalon(Config.climbMotor);
-		/**
-		 * Configure climbing mechanism maximum power draw
-		 */
-		climbMaxCurrent = Config.climbMaxCurrent;
-		climbButtonSpeedUp = Config.climbButtonSpeedUp;
-		climbButtonSlowDown = Config.climbButtonSlowDown;
-		climbInc = Config.climbInc;
-		baseBallThrottle = Config.baseBallThrottle;
-		deltaBallThrottle = Config.deltaBallThrottle;
-		beltSpeed = Config.beltSpeed;
-		beltButton = Config.beltButton;
-		ballShootButton = Config.ballShootButton;
-		ballLowerSpeedButton = Config.ballLowerSpeedButton;
-		ballFasterSpeedButton = Config.ballFasterSpeedButton;
+		/** Configure climbing mechanism maximum power draw */
 	}
 
 	/**
@@ -142,17 +85,13 @@ public class Robot extends IterativeRobot {
 		configSetup();
 	}
 
-	/**
-	 * This function is run once each time the robot enters autonomous mode
-	 */
+	/** This function is run once each time the robot enters autonomous mode */
 	@Override
 	public void autonomousInit() {
 		// TODO Implement Timer
 	}
 
-	/**
-	 * This function is called periodically during autonomous
-	 */
+	/** This function is called periodically during autonomous */
 	@Override
 	public void autonomousPeriodic() {
 		// TODO Make Autonomous work...
@@ -168,12 +107,10 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopInit() {
 		System.out.println("Hello World");
-		ballThrottle = baseBallThrottle;
+		ballThrottle = Config.baseBallThrottle;
 	}
 
-	/**
-	 * This function is called periodically during operator control
-	 */
+	/** This function is called periodically during operator control */
 	@Override
 	public void teleopPeriodic() {
 		climb();
@@ -181,65 +118,68 @@ public class Robot extends IterativeRobot {
 		shoot();
 		ballConveyorBelt();
 
-		/**
-		 * Implement xbox controller main button usage
-		 */
+		/** Implement xbox controller main button usage */
 		boolean buttonA = xbox.getRawButton(1);
 		boolean buttonB = xbox.getRawButton(2);
 
-		if (buttonA) System.out.println("pressedA");
-		if (buttonB) System.out.println("pressedB");
+		if (buttonA)
+			System.out.println("pressedA");
+		if (buttonB)
+			System.out.println("pressedB");
 	}
-	
-	/**
-	 * Ball Shooter Code
-	 */
+
+	/** Ball Shooter Code */
 	public void shoot() {
-		boolean ballShoot = xbox.getRawButton(ballShootButton);
-		boolean lowerSpeed = xbox.getRawButton(ballLowerSpeedButton);
-		boolean fasterSpeed = xbox.getRawButton(ballFasterSpeedButton);
-		if (lowerSpeed) ballThrottle -= deltaBallThrottle;
-		if (fasterSpeed) ballThrottle += deltaBallThrottle;
-		if (ballShoot) ballDrive.drive(ballThrottle, 0.0);
-		else ballDrive.drive(0.0, 0.0);
+		boolean ballShoot = xbox.getRawButton(Config.ballShootButton);
+		boolean lowerSpeed = xbox.getRawButton(Config.ballLowerSpeedButton);
+		boolean fasterSpeed = xbox.getRawButton(Config.ballFasterSpeedButton);
+		if (lowerSpeed)
+			ballThrottle -= Config.deltaBallThrottle;
+		if (fasterSpeed)
+			ballThrottle += Config.deltaBallThrottle;
+		if (ballShoot)
+			ballDrive.drive(ballThrottle, 0.0);
+		else
+			ballDrive.drive(0.0, 0.0);
 	}
+
 	/**
-	 * Implement robot drive
-	 * Pressing trigger button will sqaure inputs
-	 * i.e. 0.5 speed turns to .25 (For momentary precise control)
+	 * Implement robot drive Pressing trigger button will sqaure inputs i.e. 0.5
+	 * speed turns to .25 (For momentary precise control)
 	 */
 	public void drive() {
 		drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
 	}
 
-	/**
-	 * Climber
-	 */
+	/** Climber */
 	public void climb() {
-		if ((xbox.getPOV() == climbButtonSpeedUp) && (climbSpeed <= 1))
-			climbSpeed = climbSpeed + climbInc;
-		if ((xbox.getPOV() == climbButtonSlowDown) && (climbSpeed <= -1))
-			climbSpeed = climbSpeed - climbInc;
-		if (climbMotor.getOutputCurrent() >= climbMaxCurrent)
+		if ((xbox.getPOV() == Config.climbButtonSpeedUp) && (climbSpeed <= 1))
+			climbSpeed = climbSpeed + Config.climbInc;
+		if ((xbox.getPOV() == Config.climbButtonSlowDown) && (climbSpeed <= -1))
+			climbSpeed = climbSpeed - Config.climbInc;
+		if (climbMotor.getOutputCurrent() >= Config.climbMaxCurrent)
 			climbMotor.set(climbSpeed);
 	}
-	/**
-	 * Ball Conveyer Belt
-	 */
+
+	/** Ball Conveyer Belt */
 	public void ballConveyorBelt() {
-		//check for toggle of belt button
-		boolean button = xbox.getRawButton(beltButton);
-		if(button) prevBeltButton = true;
-		else prevBeltButton = false;
-		if(button && !prevBeltButton) isBelting = !isBelting;
-		//turn on and off belt motor
-		if(isBelting) beltMotor.set(beltSpeed);
-		else beltMotor.set(0.0);
+		// check for toggle of belt button
+		boolean button = xbox.getRawButton(Config.beltButton);
+		if (button)
+			prevBeltButton = true;
+		else
+			prevBeltButton = false;
+		if (button && !prevBeltButton)
+			isBelting = !isBelting;
+		// turn on and off belt motor
+		if (isBelting)
+			beltMotor.set(Config.beltSpeed);
+		else
+			beltMotor.set(0.0);
 	}
-	/**
-	 * This function is called periodically during test mode
-	 */
-	
+
+	/** This function is called periodically during test mode */
+
 	@Override
 	public void testPeriodic() {
 		LiveWindow.run();
