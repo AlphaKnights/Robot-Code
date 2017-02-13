@@ -1,9 +1,5 @@
 package org.usfirst.frc.team6695.robot;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
 import com.ctre.CANTalon;
 
 import edu.wpi.first.wpilibj.Encoder;
@@ -81,12 +77,6 @@ public class Robot extends IterativeRobot {
 	//	   myTimer.start();
 	
 	/**
-	 * Configures property file
-	 * @see "config.properties"
-	 */
-	Properties config = new Properties();
-	
-	/**
 	 * Container and modifiers for climbing mechanism speed
 	 */
 	double climbSpeed = 0.0;
@@ -107,52 +97,40 @@ public class Robot extends IterativeRobot {
 	 */
 	public void configSetup() {
 		System.out.println("Starting UP");
-		try {
-			//InputStream input = getClass().getResourceAsStream("config.properties");
-			//InputStream input = getClass().getResourceAsStream("\config.properties");	
-			//InputStream input = getClass().getResourceAsStream("/config.properties");
-			InputStream input = Robot.class.getResourceAsStream("config.properties");
-			//InputStream input = getClass().getResourceAsStream("./config.properties");
-			config.load(input);
-		} catch (IOException e) {
-			System.err.println("Could Not Read config");
-			e.printStackTrace();
-		}
 		/**
 		 * Initialize joystick and xbox controller input
 		 */
-		logitechJoy = new Joystick(Integer.parseInt(config.getProperty("joystick")));
-		xbox = new XboxController(Integer.parseInt(config.getProperty("xbox")));
+		logitechJoy = new Joystick(Config.joystick);
+		xbox = new XboxController(Config.xbox);
 		
 		/**
 		 * Initialize robot drivetrain configuration
 		 */
-		drivetrain = new AlphaDrive(Integer.parseInt(config.getProperty("driveMotorLeftChannel")),
-				Integer.parseInt(config.getProperty("driveMotorRightChannel")));
+		drivetrain = new AlphaDrive(Config.driveMotorLeftChannel,Config.driveMotorRightChannel);
 		/**
 		 * Initialize ball launcher motor configuration
 		 */
-		ballDrive = new RobotDrive(new CANTalon(Integer.parseInt(config.getProperty("ballMotor1"))),
-				new CANTalon(Integer.parseInt(config.getProperty("ballMotor2"))));
+		ballDrive = new RobotDrive(new CANTalon(Config.ballMotor1),
+				new CANTalon(Config.ballMotor2));
 		
 		/**
 		 * Initialize climbing mechanism motor configuration
 		 */
-		climbMotor = new CANTalon(Integer.parseInt(config.getProperty("climbMotor")));
+		climbMotor = new CANTalon(Config.climbMotor);
 		/**
 		 * Configure climbing mechanism maximum power draw
 		 */
-		climbMaxCurrent = Double.parseDouble(config.getProperty("climbMaxCurrent"));
-		climbButtonSpeedUp = Integer.parseInt(config.getProperty("climbButtonSpeedUp"));
-		climbButtonSlowDown = Integer.parseInt(config.getProperty("climbButtonSlowDown"));
-		climbInc = Double.parseDouble(config.getProperty("climbInc"));
-		baseBallThrottle = Double.parseDouble(config.getProperty("baseBallThrottle"));
-		deltaBallThrottle = Double.parseDouble(config.getProperty("deltaBallThrottle"));
-		beltSpeed = Double.parseDouble(config.getProperty("beltSpeed"));
-		beltButton = XboxButtonID.valueOf(config.getProperty("beltButton")).value();
-		ballShootButton = XboxButtonID.valueOf(config.getProperty("ballShootButton")).value();
-		ballLowerSpeedButton = XboxButtonID.valueOf(config.getProperty("ballLowerSpeedButton")).value();
-		ballFasterSpeedButton = XboxButtonID.valueOf(config.getProperty("ballFasterSpeedButton")).value();
+		climbMaxCurrent = Config.climbMaxCurrent;
+		climbButtonSpeedUp = Config.climbButtonSpeedUp;
+		climbButtonSlowDown = Config.climbButtonSlowDown;
+		climbInc = Config.climbInc;
+		baseBallThrottle = Config.baseBallThrottle;
+		deltaBallThrottle = Config.deltaBallThrottle;
+		beltSpeed = Config.beltSpeed;
+		beltButton = Config.beltButton;
+		ballShootButton = Config.ballShootButton;
+		ballLowerSpeedButton = Config.ballLowerSpeedButton;
+		ballFasterSpeedButton = Config.ballFasterSpeedButton;
 	}
 
 	/**
