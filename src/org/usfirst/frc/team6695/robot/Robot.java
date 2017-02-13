@@ -58,7 +58,7 @@ public class Robot extends IterativeRobot {
 	/**
 	 * Initialize instance variables from property file
 	 * 
-	 * @see "config.properties"
+	 * @see Config
 	 */
 	public void configSetup() {
 		System.out.println("Starting UP");
@@ -66,7 +66,7 @@ public class Robot extends IterativeRobot {
 		logitechJoy = new Joystick(Config.joystick);
 		xbox = new XboxController(Config.xbox);
 
-		/** Initialize robot drivetrain configuration */
+		/** Initialize robot drivetrain configuration*/
 		drivetrain = new AlphaDrive(Config.driveMotorLeftChannel, Config.driveMotorRightChannel);
 		/** Initialize ball launcher motor configuration */
 		ballDrive = new RobotDrive(new CANTalon(Config.ballMotor1), new CANTalon(Config.ballMotor2));

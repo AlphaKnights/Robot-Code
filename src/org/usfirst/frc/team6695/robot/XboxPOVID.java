@@ -1,5 +1,9 @@
 package org.usfirst.frc.team6695.robot;
-
+/**
+ * Human Readable xbox pov values.
+ * @author Pasha
+ * @see XboxButtonID
+ */
 public enum XboxPOVID {
 	UP(0),
 	UPRIGHT(45),

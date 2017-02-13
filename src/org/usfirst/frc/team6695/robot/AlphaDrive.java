@@ -5,7 +5,14 @@ import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.hal.HAL;
 import edu.wpi.first.wpilibj.hal.FRCNetComm.tInstances;
 import edu.wpi.first.wpilibj.hal.FRCNetComm.tResourceType;
-
+/**
+ * Alpha Knights version of Robot Drive
+ * @see RobotDrive
+ * @author Michael
+ * @author Pasha
+ * @author Alex
+ *
+ */
 public class AlphaDrive extends RobotDrive {
 
 	public AlphaDrive(int leftMotorChannel, int rightMotorChannel) {

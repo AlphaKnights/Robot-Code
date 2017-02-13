@@ -1,5 +1,9 @@
 package org.usfirst.frc.team6695.robot;
-
+/**
+ * Class that holds all the unchanging config values
+ * @author Michael
+ *
+ */
 public class Config {
 	/** Left side DIO Port */
 	final static int driveMotorLeftChannel = 0;
