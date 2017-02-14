@@ -1,8 +1,10 @@
 package org.usfirst.frc.team6695.robot;
+
 /**
  * Human Readable Version of xbox keys
+ * 
  * @author Alpha Knights
- * @see XboxPOVID 
+ * @see XboxPOVID
  */
 public enum XboxButtonID {
 	A(0),
@@ -15,12 +17,14 @@ public enum XboxButtonID {
 	Start(8),
 	LS(9),
 	RS(10);
-	
+
 	private final int val;
-	
+
 	XboxButtonID(final int i) {
 		val = i;
 	}
-	
-	public int value() { return val; }
+
+	public int value() {
+		return val;
+	}
 }

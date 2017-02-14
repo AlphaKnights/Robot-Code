@@ -68,16 +68,12 @@ public class AlphaDrive extends RobotDrive {
 		if (squaredInputs) {
 			// square the inputs (while preserving the sign) to increase fine
 			// control while permitting full power
-			if (moveValue >= 0.0) {
-				moveValue = moveValue * moveValue;
-			} else {
-				moveValue = -(moveValue * moveValue);
-			}
-			if (rotateValue >= 0.0) {
-				rotateValue = rotateValue * rotateValue;
-			} else {
-				rotateValue = -(rotateValue * rotateValue);
-			}
+			if (moveValue >= 0.0) moveValue = moveValue * moveValue;
+			else moveValue = -(moveValue * moveValue);
+
+			if (rotateValue >= 0.0) rotateValue = rotateValue * rotateValue;
+			else rotateValue = -(rotateValue * rotateValue);
+
 		}
 
 		if (moveValue > 0.0) {

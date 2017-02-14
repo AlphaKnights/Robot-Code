@@ -1,6 +1,8 @@
 package org.usfirst.frc.team6695.robot;
+
 /**
  * Human Readable xbox pov values.
+ * 
  * @author Alpha Knights
  * @see XboxButtonID
  */
@@ -14,12 +16,14 @@ public enum XboxPOVID {
 	LEFT(270),
 	UPLEFT(315),
 	CENTER(-1);
-	
+
 	private final int val;
-	
+
 	XboxPOVID(final int i) {
 		val = i;
 	}
-	
-	public int value() { return val; }
+
+	public int value() {
+		return val;
+	}
 }
