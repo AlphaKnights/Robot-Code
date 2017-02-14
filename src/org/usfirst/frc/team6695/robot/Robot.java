@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.Ultrasonic;
 // TODO import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -30,7 +31,7 @@ public class Robot extends IterativeRobot {
 	int avgCount;
 	double avgLinearDistance;
 	double avgSpeed;
-
+Ultrasonic
 	/** Drive configuration for ball motors */
 	RobotDrive ballDrive;
 
