@@ -31,7 +31,6 @@ public class Robot extends IterativeRobot {
 	int avgCount;
 	double avgLinearDistance;
 	double avgSpeed;
-Ultrasonic
 	/** Drive configuration for ball motors */
 	RobotDrive ballDrive;
 
@@ -123,10 +122,8 @@ Ultrasonic
 		boolean buttonA = xbox.getRawButton(1);
 		boolean buttonB = xbox.getRawButton(2);
 
-		if (buttonA)
-			System.out.println("pressedA");
-		if (buttonB)
-			System.out.println("pressedB");
+		if (buttonA) System.out.println("pressedA");
+		if (buttonB) System.out.println("pressedB");
 	}
 
 	/** Ball Shooter Code */
@@ -134,14 +131,10 @@ Ultrasonic
 		boolean ballShoot = xbox.getRawButton(Config.ballShootButton);
 		boolean lowerSpeed = xbox.getRawButton(Config.ballLowerSpeedButton);
 		boolean fasterSpeed = xbox.getRawButton(Config.ballFasterSpeedButton);
-		if (lowerSpeed)
-			ballThrottle -= Config.deltaBallThrottle;
-		if (fasterSpeed)
-			ballThrottle += Config.deltaBallThrottle;
-		if (ballShoot)
-			ballDrive.drive(ballThrottle, 0.0);
-		else
-			ballDrive.drive(0.0, 0.0);
+		if (lowerSpeed) ballThrottle -= Config.deltaBallThrottle;
+		if (fasterSpeed) ballThrottle += Config.deltaBallThrottle;
+		if (ballShoot) ballDrive.drive(ballThrottle, 0.0);
+		else ballDrive.drive(0.0, 0.0);
 	}
 
 	/**
@@ -158,25 +151,19 @@ Ultrasonic
 			climbSpeed = climbSpeed + Config.climbInc;
 		if ((xbox.getPOV() == Config.climbButtonSlowDown) && (climbSpeed <= -1))
 			climbSpeed = climbSpeed - Config.climbInc;
-		if (climbMotor.getOutputCurrent() >= Config.climbMaxCurrent)
-			climbMotor.set(climbSpeed);
+		if (climbMotor.getOutputCurrent() >= Config.climbMaxCurrent) climbMotor.set(climbSpeed);
 	}
 
 	/** Ball Conveyer Belt */
 	public void ballConveyorBelt() {
 		// check for toggle of belt button
 		boolean button = xbox.getRawButton(Config.beltButton);
-		if (button)
-			prevBeltButton = true;
-		else
-			prevBeltButton = false;
-		if (button && !prevBeltButton)
-			isBelting = !isBelting;
+		if (button) prevBeltButton = true;
+		else prevBeltButton = false;
+		if (button && !prevBeltButton) isBelting = !isBelting;
 		// turn on and off belt motor
-		if (isBelting)
-			beltMotor.set(Config.beltSpeed);
-		else
-			beltMotor.set(0.0);
+		if (isBelting) beltMotor.set(Config.beltSpeed);
+		else beltMotor.set(0.0);
 	}
 
 	/** This function is called periodically during test mode */
