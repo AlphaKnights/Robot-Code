@@ -49,6 +49,7 @@ public class Robot extends IterativeRobot {
 	boolean prevBeltButton = false;
 	
 	
+	Ultrasonic uss = new Ultrasonic(Config.ultrasonicPort,Config.ultrasonicPort);
 	// TODO Implement timers
 	// Timer myTimer = new Timer();
 	// myTimer.start();
