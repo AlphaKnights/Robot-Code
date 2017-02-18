@@ -1,7 +1,5 @@
 package org.usfirst.frc.team6695.robot;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-
 /**
  * Class that holds all the unchanging config values
  * 
@@ -9,6 +7,8 @@ import edu.wpi.first.wpilibj.DigitalInput;
  *
  */
 final public class Config {
+	/**Should we allow estop? Only for testing IMO**/
+	static boolean allowEStop = true;
 	/** Left side PWM Port */
 	static int driveMotorLeftChannel = 0;
 	/** Right Side PWM port */

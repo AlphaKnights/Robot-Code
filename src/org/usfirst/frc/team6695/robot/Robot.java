@@ -2,8 +2,6 @@ package org.usfirst.frc.team6695.robot;
 
 import com.ctre.CANTalon;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
@@ -47,9 +45,8 @@ public class Robot extends IterativeRobot {
 	/** Controls ball hopper belt state */
 	boolean isBelting = false;
 	boolean prevBeltButton = false;
-	
-	
-	Ultrasonic uss = new Ultrasonic(Config.ultrasonicPort,Config.ultrasonicPort);
+
+	Ultrasonic uss = new Ultrasonic(Config.ultrasonicPort, Config.ultrasonicPort);
 	// TODO Implement timers
 	// Timer myTimer = new Timer();
 	// myTimer.start();
@@ -117,7 +114,7 @@ public class Robot extends IterativeRobot {
 	/** This function is called periodically during operator control */
 	@Override
 	public void teleopPeriodic() {
-		//System.out.println(uss.getRangeInches());
+		// System.out.println(uss.getRangeInches());
 		climb();
 		drive();
 		shoot(true);
@@ -172,13 +169,15 @@ public class Robot extends IterativeRobot {
 
 	/** If stop button is clicked, stop robot functions **/
 	public void eStop() {
-		if (xbox.getStartButton()) {
-			drivetrain.setMaxOutput(0);
-			ballDrive.setMaxOutput(0);
-			beltMotor.set(0);
-			beltMotor.disable();
-			climbMotor.set(0);
-			climbMotor.disable();
+		if (Config.allowEStop) {
+			if (xbox.getStartButton()) {
+				drivetrain.setMaxOutput(0);
+				ballDrive.setMaxOutput(0);
+				beltMotor.set(0);
+				beltMotor.disable();
+				climbMotor.set(0);
+				climbMotor.disable();
+			}
 		}
 	}
 
