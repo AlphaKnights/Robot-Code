@@ -1,5 +1,7 @@
 package org.usfirst.frc.team6695.robot;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+
 /**
  * Class that holds all the unchanging config values
  * 
@@ -43,4 +45,8 @@ final public class Config {
 	static int ballLowerSpeedButton = XboxButtonID.LB.value();
 	/** Button to speed up the ball shooter */
 	static int ballFasterSpeedButton = XboxButtonID.RB.value();
+	/** DIO port for ultrasonic **/
+	static int ultrasonicPort = 4;
+	static int encoderPortA = 0;
+	static int encoderPortB= 1;
 }

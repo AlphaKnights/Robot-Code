@@ -2,6 +2,8 @@ package org.usfirst.frc.team6695.robot;
 
 import com.ctre.CANTalon;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
@@ -45,7 +47,8 @@ public class Robot extends IterativeRobot {
 	/** Controls ball hopper belt state */
 	boolean isBelting = false;
 	boolean prevBeltButton = false;
-
+	
+	
 	// TODO Implement timers
 	// Timer myTimer = new Timer();
 	// myTimer.start();
@@ -65,6 +68,7 @@ public class Robot extends IterativeRobot {
 		/** Initialize joystick and xbox controller input */
 		logitechJoy = new Joystick(Config.joystick);
 		xbox = new XboxController(Config.xbox);
+		ballThrottle = Config.baseBallThrottle;
 
 		/** Initialize robot drivetrain configuration */
 		drivetrain = new AlphaDrive(Config.driveMotorLeftChannel, Config.driveMotorRightChannel);
@@ -107,34 +111,33 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopInit() {
 		System.out.println("Hello World");
-		ballThrottle = Config.baseBallThrottle;
 	}
 
 	/** This function is called periodically during operator control */
 	@Override
 	public void teleopPeriodic() {
+		//System.out.println(uss.getRangeInches());
 		climb();
 		drive();
-		shoot();
+		shoot(true);
 		ballConveyorBelt();
-
-		/** Implement xbox controller main button usage */
-		boolean buttonA = xbox.getRawButton(1);
-		boolean buttonB = xbox.getRawButton(2);
-
-		if (buttonA) System.out.println("pressedA");
-		if (buttonB) System.out.println("pressedB");
+		eStop();
 	}
 
 	/** Ball Shooter Code */
-	public void shoot() {
+	public void shoot(boolean useUltrasonic) {
 		boolean ballShoot = xbox.getRawButton(Config.ballShootButton);
 		boolean lowerSpeed = xbox.getRawButton(Config.ballLowerSpeedButton);
 		boolean fasterSpeed = xbox.getRawButton(Config.ballFasterSpeedButton);
-		if (lowerSpeed) ballThrottle -= Config.deltaBallThrottle;
-		if (fasterSpeed) ballThrottle += Config.deltaBallThrottle;
-		if (ballShoot) ballDrive.drive(ballThrottle, 0.0);
-		else ballDrive.drive(0.0, 0.0);
+		if (useUltrasonic) {
+
+		} else {
+
+			if (lowerSpeed) ballThrottle -= Config.deltaBallThrottle;
+			if (fasterSpeed) ballThrottle += Config.deltaBallThrottle;
+			if (ballShoot) ballDrive.drive(ballThrottle, 0.0);
+			else ballDrive.drive(0.0, 0.0);
+		}
 	}
 
 	/**
@@ -166,8 +169,19 @@ public class Robot extends IterativeRobot {
 		else beltMotor.set(0.0);
 	}
 
-	/** This function is called periodically during test mode */
+	/** If stop button is clicked, stop robot functions **/
+	public void eStop() {
+		if (xbox.getStartButton()) {
+			drivetrain.setMaxOutput(0);
+			ballDrive.setMaxOutput(0);
+			beltMotor.set(0);
+			beltMotor.disable();
+			climbMotor.set(0);
+			climbMotor.disable();
+		}
+	}
 
+	/** This function is called periodically during test mode */
 	@Override
 	public void testPeriodic() {
 		LiveWindow.run();
