@@ -26,8 +26,10 @@ public class Robot extends IterativeRobot {
 	/** Drive configuration for robot drivetrain */
 	AlphaDrive drivetrain;
 	// sample encoder code
-	Encoder leftChannelEnc = new Encoder(0, 1, false, Encoder.EncodingType.k2X);
-	Encoder rightChannelEnc = new Encoder(2, 3, false, Encoder.EncodingType.k2X);
+	Encoder leftChannelEnc = new Encoder(Config.encoderLeftPortA, Config.encoderLeftPortB, false,
+			Encoder.EncodingType.k2X);
+	Encoder rightChannelEnc = new Encoder(Config.encoderLeftPortA, Config.encoderRightPortB, false,
+			Encoder.EncodingType.k2X);
 	int avgCount;
 	double avgLinearDistance;
 	double avgSpeed;
@@ -47,6 +49,7 @@ public class Robot extends IterativeRobot {
 	boolean prevBeltButton = false;
 
 	Ultrasonic uss = new Ultrasonic(Config.ultrasonicPort, Config.ultrasonicPort);
+
 	// TODO Implement timers
 	// Timer myTimer = new Timer();
 	// myTimer.start();
@@ -128,7 +131,7 @@ public class Robot extends IterativeRobot {
 		boolean lowerSpeed = xbox.getRawButton(Config.ballLowerSpeedButton);
 		boolean fasterSpeed = xbox.getRawButton(Config.ballFasterSpeedButton);
 		if (useUltrasonic) {
-
+			System.out.println(uss.getRangeMM());
 		} else {
 
 			if (lowerSpeed) ballThrottle -= Config.deltaBallThrottle;

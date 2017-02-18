@@ -7,7 +7,7 @@ package org.usfirst.frc.team6695.robot;
  *
  */
 final public class Config {
-	/**Should we allow estop? Only for testing IMO**/
+	/** Should we allow estop? Only for testing IMO **/
 	static boolean allowEStop = true;
 	/** Left side PWM Port */
 	static int driveMotorLeftChannel = 0;
@@ -47,6 +47,12 @@ final public class Config {
 	static int ballFasterSpeedButton = XboxButtonID.RB.value();
 	/** DIO port for ultrasonic **/
 	static int ultrasonicPort = 4;
-	static int encoderPortA = 0;
-	static int encoderPortB= 1;
+	/**DIO Port #1 For Right Encoder*/
+	static int encoderRightPortA = 0;
+	/**DIO Port #2 For Right Encoder*/
+	static int encoderRightPortB = 1;
+	/**DIO Port #1 For Left Encoder*/
+	static int encoderLeftPortA = 2;
+	/**DIO Port #2 For Left Encoder*/
+	static int encoderLeftPortB = 3;
 }
