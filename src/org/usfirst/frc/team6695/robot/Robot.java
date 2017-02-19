@@ -45,7 +45,7 @@ public class Robot extends IterativeRobot {
 	/** Controls ball hopper belt state */
 	boolean isBelting = false;
 	boolean prevBeltButton = false;
-
+	boolean prevBallShooter = false;
 	// TODO Implement timers
 	// Timer myTimer = new Timer();
 	// myTimer.start();
@@ -129,12 +129,20 @@ public class Robot extends IterativeRobot {
 	/** Ball Shooter Code */
 	public void shoot() {
 		boolean ballShoot = xbox.getRawButton(Config.ballShootButton);
+
+		if (ballShoot && !prevBallShooter) prevBallShooter = !prevBallShooter;
+		prevBallShooter = ballShoot;
 		boolean lowerSpeed = xbox.getRawButton(Config.ballLowerSpeedButton);
 		boolean fasterSpeed = xbox.getRawButton(Config.ballFasterSpeedButton);
-		if (lowerSpeed) ballThrottle -= Config.deltaBallThrottle;
-		if (fasterSpeed) ballThrottle += Config.deltaBallThrottle;
-		if (ballShoot) ballDrive.drive(ballThrottle, 0.0);
-		else ballDrive.drive(0.0, 0.0);
+		if (ballShoot && !prevBallShooter) {
+			ballDrive.drive(-1, 0);
+		} else if (ballShoot && prevBallShooter) {
+
+			if (lowerSpeed) ballThrottle -= Config.deltaBallThrottle;
+			if (fasterSpeed) ballThrottle += Config.deltaBallThrottle;
+			if (ballShoot) ballDrive.drive(ballThrottle, 0.0);
+			else ballDrive.drive(0.0, 0.0);
+		}
 	}
 
 	/**
