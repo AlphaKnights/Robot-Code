@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Ultrasonic;
-// TODO import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
@@ -33,6 +33,9 @@ public class Robot extends IterativeRobot {
 	int avgCount;
 	double avgLinearDistance;
 	double avgSpeed;
+	/** Drivetrain distance traveled measurement */
+	Encoder drivetrainEnc;
+	int encUnit=Config.encUnit;
 	/** Drive configuration for ball motors */
 	RobotDrive ballDrive;
 
@@ -61,7 +64,7 @@ public class Robot extends IterativeRobot {
 
 	/**
 	 * Initialize instance variables from property file
-	 * 
+	 *
 	 * @see Config
 	 */
 	public void configSetup() {
@@ -79,6 +82,8 @@ public class Robot extends IterativeRobot {
 		/** Initialize climbing mechanism motor configuration */
 		climbMotor = new CANTalon(Config.climbMotor);
 		/** Configure climbing mechanism maximum power draw */
+
+		drivetrainEnc = new Encoder(0, 1, false, Encoder.EncodingType.k2X);
 	}
 
 	/**
@@ -93,16 +98,49 @@ public class Robot extends IterativeRobot {
 	/** This function is run once each time the robot enters autonomous mode */
 	@Override
 	public void autonomousInit() {
-		// TODO Implement Timer
+	// INITIALIZE COUNTER
+		drivetrainEnc.reset();
+	// STAGE 1a
+		// TODO implement way to differentiate between start locations
+		// if position == A / C (far sides of start area)
+			// move in straight line until baseline crossed
+		while (drivetrainEnc.get() < 10 * encUnit) { // count ~~ meter * (count / meter)
+			drivetrain.setLeftRightMotorOutputs(0.6, 0.6); // arbitrary speed values
+		}
+	// STAGE 1b
+		// else
+			// turn 45 degrees
+			// move forward until intersecting the path of position A / C
+			// turn -45 degrees
+			// move in straight line until baseline crossed
+
+	// INITIALIZE COUNTER
+		drivetrainEnc.reset();
+	// STAGE 2
+		// reverse some distance to reach airship
+		while (drivetrainEnc.get() < 3 * encUnit) {
+			drivetrain.setLeftRightMotorOutputs(-0.6, -0.6);
+		}
+		// turn some amount towards airship
+		Timer turnTimer = new Timer();
+	 	turnTimer.start();
+		// TODO find how many milliseconds it takes to turn 90 degrees
+		// 		then derive formula for turn time from experimental data
+		while (turnTimer.get() < 100000) { // 100 milliseconds
+			drivetrain.setLeftRightMotorOutputs(0.6, -0.6); // polarity depends on orientation
+		}
+	// INITIALIZE COUNTER
+		drivetrainEnc.reset();
+	// STAGE 3
+		// drive into airship
+		while (drivetrainEnc.get() < 3 * encUnit) {
+			drivetrain.setLeftRightMotorOutputs(0.6, -0.6);
+		}
 	}
 
 	/** This function is called periodically during autonomous */
 	@Override
 	public void autonomousPeriodic() {
-		// TODO Make Autonomous work...
-		avgCount = (leftChannelEnc.get() + rightChannelEnc.get()) / 2;
-		avgLinearDistance = (leftChannelEnc.getDistance() + rightChannelEnc.getDistance()) / 2;
-		avgSpeed = (leftChannelEnc.getRate() + rightChannelEnc.getRate()) / 2;
 	}
 
 	/**

@@ -47,12 +47,14 @@ final public class Config {
 	static int ballFasterSpeedButton = XboxButtonID.RB.value();
 	/** DIO port for ultrasonic **/
 	static int ultrasonicPort = 4;
-	/**DIO Port #1 For Right Encoder*/
+	/** DIO Port #1 For Right Encoder */
 	static int encoderRightPortA = 0;
-	/**DIO Port #2 For Right Encoder*/
+	/** DIO Port #2 For Right Encoder */
 	static int encoderRightPortB = 1;
-	/**DIO Port #1 For Left Encoder*/
+	/** DIO Port #1 For Left Encoder */
 	static int encoderLeftPortA = 2;
-	/**DIO Port #2 For Left Encoder*/
+	/** DIO Port #2 For Left Encoder */
 	static int encoderLeftPortB = 3;
+	/** Drivetrain encoder unit definition (counts / meter) */
+	static int encUnit = 100; // TODO requires testing, means nothing atm
 }
