@@ -6,7 +6,9 @@ package org.usfirst.frc.team6695.robot;
  * @author Alpha Knights
  *
  */
-final public class Config {
+public final class Config {
+
+	// Motors
 	/** Left side PWM Port */
 	static int driveMotorLeftChannel = 0;
 	/** Right Side PWM port */
@@ -17,24 +19,15 @@ final public class Config {
 	static int ballMotor2 = 2;
 	/** Climb Motor */
 	static int climbMotor = 3;
-	/** Max Current of climb motor */
-	static double climbMaxCurrent = 1.0;
-	/** Joystick Port */
-	static int joystick = 0;
-	/** xbox port */
-	static int xbox = 1;
+	/** Ball Stir Motor */
+	static int ballStirMotor = 4;
+
+	// Buttons
+	static int ClimbHoldButton = XboxButtonID.Back.value();
 	/** Button To press to speedup climb motor */
 	static int climbButtonSpeedUp = XboxPOVID.UP.value();
 	/** Button to press to slow down climb motor */
 	static int climbButtonSlowDown = XboxPOVID.DOWN.value();
-	/** How much to increment climb speed */
-	static double climbInc = 0.1;
-	/** Start speed of ball launcher */
-	static double baseBallThrottle = 0.5;
-	/** How much to change ball speed by per click */
-	static double deltaBallThrottle = 0.05;
-	/** speed of belt */
-	static double beltSpeed = 0.2;
 	/** This button turns on or off the belt */
 	static int beltButton = XboxButtonID.Y.value();
 	/** Button to press to shoot */
@@ -43,6 +36,48 @@ final public class Config {
 	static int ballLowerSpeedButton = XboxButtonID.LB.value();
 	/** Button to speed up the ball shooter */
 	static int ballFasterSpeedButton = XboxButtonID.RB.value();
-	/** Drivetrain encoder unit definition (counts / meter)*/
+
+	// INPUTS
+	/** Joystick Port */
+	static int joystick = 0;// TODO DEPENDS ON SIDE
+	/** xbox port */
+	static int xbox = 1;// TODO DEPENDS ON SIDE
+
+	// DIO PORTS
+	/** DIO port for ultrasonic **/
+	static int ultrasonicPort = 4;
+	/** DIO Port #1 For Right Encoder */
+	static int encoderRightPortA = 0;
+	/** DIO Port #2 For Right Encoder */
+	static int encoderRightPortB = 1;
+	/** DIO Port #1 For Left Encoder */
+	static int encoderLeftPortA = 2;
+	/** DIO Port #2 For Left Encoder */
+	static int encoderLeftPortB = 3;
+
+	// DELTAs
+	/** How much to increment climb speed */
+	static double climbInc = 0.1;
+	/** Start speed of ball launcher */
+	static double baseBallThrottle = 0.5;
+	/** How much to change ball speed by per click */
+	static double deltaBallThrottle = 0.05;
+
+	// Speeds
+	/** speed of belt */
+	static double beltSpeed = 0.2;
+	/** Speed To go when holding */
+	static double holdSpeed = 0.0;// TODO FIND SPEED
+
+	// Maxumums
+	/** Max Current of climb motor */
+	static double climbMaxCurrent = 1.0; // TODO FIND MAX CURRENT
+
+	// Other....
+	/** Should we allow estop? Only for testing IMO **/
+	static boolean allowEStop = true;
+	/** Drivetrain encoder unit definition (counts / meter) */
 	static int encUnit = 100; // TODO requires testing, means nothing atm
+	/** True/False for logging */
+	static boolean logging = true;
 }
