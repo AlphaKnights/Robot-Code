@@ -26,23 +26,16 @@ public class Robot extends IterativeRobot {
 	CANTalon beltMotor;
 	/** Drive configuration for robot drivetrain */
 	AlphaDrive drivetrain;
-	// sample encoder code
-	// Encoder leftChannelEnc = new Encoder(Config.encoderLeftPortA,
-	// Config.encoderLeftPortB, false,
-	// Encoder.EncodingType.k2X);
-	// Encoder rightChannelEnc = new Encoder(Config.encoderLeftPortA,
-	// Config.encoderRightPortB, false,
-	// Encoder.EncodingType.k2X);
 	int avgCount;
 	double avgLinearDistance;
 	double avgSpeed;
 	/** Drivetrain distance traveled measurement */
 	Encoder drivetrainEncLeft = new Encoder(Config.encoderLeftPortA, Config.encoderLeftPortB, false, EncodingType.k2X);
-	Encoder drivetrainEncRight = new Encoder(Config.encoderRightPortA, Config.encoderRightPortB, false,EncodingType.k2X);
+	Encoder drivetrainEncRight = new Encoder(Config.encoderRightPortA, Config.encoderRightPortB, false,
+			EncodingType.k2X);
 	int encUnit = Config.encUnit;
 	/** Drive configuration for ball motors */
 	RobotDrive ballDrive;
-	
 
 	/** Controls climbing state */
 	boolean isClimbing = false;
@@ -86,7 +79,7 @@ public class Robot extends IterativeRobot {
 
 		/** Initialize climbing mechanism motor configuration */
 		climbMotor = new CANTalon(Config.climbMotor);
-		
+
 		beltMotor = new CANTalon(Config.ballStirMotor);
 	}
 
@@ -108,8 +101,9 @@ public class Robot extends IterativeRobot {
 		// TODO implement way to differentiate between start locations
 		// if position == A / C (far sides of start area)
 		// move in straight line until baseline crossed
-		while (drivetrainEncLeft.get() < 10 * encUnit) { // count ~~ meter * (count
-														// / meter)
+		while (drivetrainEncLeft.get() < 10 * encUnit) { // count ~~ meter *
+															// (count
+															// / meter)
 			drivetrain.setLeftRightMotorOutputs(0.6, 0.6); // arbitrary speed
 															// values
 		}
@@ -165,12 +159,18 @@ public class Robot extends IterativeRobot {
 		// System.out.println(uss.getRangeInches());
 		climb();
 		drive();
-		shoot(true);
+		shoot(false);
 		ballConveyorBelt();
 		eStop();
 	}
 
-	/** Ball Shooter Code */
+	/**
+	 * Ball Shooter Code
+	 * 
+	 * @param useUltrasonic
+	 *            True if ultrasonic should be used to calculate shoot speed.
+	 *            DOES NOT WORK. Keep False
+	 **/
 	public void shoot(boolean useUltrasonic) {
 		boolean ballShoot = xbox.getRawButton(Config.ballShootButton);
 		boolean lowerSpeed = xbox.getRawButton(Config.ballLowerSpeedButton);
@@ -195,12 +195,18 @@ public class Robot extends IterativeRobot {
 	}
 
 	/** Climber */
+	Boolean holding = false;
+
 	public void climb() {
-		if ((xbox.getPOV() == Config.climbButtonSpeedUp) && (climbSpeed <= 1))
-			climbSpeed = climbSpeed + Config.climbInc;
-		if ((xbox.getPOV() == Config.climbButtonSlowDown) && (climbSpeed <= -1))
-			climbSpeed = climbSpeed - Config.climbInc;
-		if (climbMotor.getOutputCurrent() >= Config.climbMaxCurrent) climbMotor.set(climbSpeed);
+		if (!holding) {
+			if (Config.logging) System.out.println("Climb Motor current:" + climbMotor.getOutputCurrent());
+
+			if ((xbox.getPOV() == Config.climbButtonSpeedUp) && (climbSpeed <= 1))
+				climbSpeed = climbSpeed + Config.climbInc;
+			if ((xbox.getPOV() == Config.climbButtonSlowDown) && (climbSpeed <= -1))
+				climbSpeed = climbSpeed - Config.climbInc;
+			if (climbMotor.getOutputCurrent() >= Config.climbMaxCurrent) climbMotor.set(climbSpeed);
+		}
 	}
 
 	/** Ball Conveyer Belt */

@@ -6,7 +6,8 @@ package org.usfirst.frc.team6695.robot;
  * @author Alpha Knights
  *
  */
-final public class Config {
+public final class Config {
+	static int ClimbHoldButton = XboxButtonID.Back.value();
 	/** Should we allow estop? Only for testing IMO **/
 	static boolean allowEStop = true;
 	/** Left side PWM Port */
@@ -20,11 +21,11 @@ final public class Config {
 	/** Climb Motor */
 	static int climbMotor = 3;
 	/** Max Current of climb motor */
-	static double climbMaxCurrent = 1.0;
+	static double climbMaxCurrent = 1.0; //TODO FIND MAX CURRENT
 	/** Joystick Port */
-	static int joystick = 0;
+	static int joystick = 0;//TODO DEPENDS ON SIDE
 	/** xbox port */
-	static int xbox = 1;
+	static int xbox = 1;//TODO DEPENDS ON SIDE
 	/** Button To press to speedup climb motor */
 	static int climbButtonSpeedUp = XboxPOVID.UP.value();
 	/** Button to press to slow down climb motor */
@@ -59,4 +60,8 @@ final public class Config {
 	static int encUnit = 100; // TODO requires testing, means nothing atm
 	/** Ball Stir Motor */
 	static int ballStirMotor = 4;
+	/** True/False for logging */
+	static boolean logging = true;
+	/**Speed To go when holding*/
+	static double holdSpeed = 0.0;//TODO FIND SPEED
 }
