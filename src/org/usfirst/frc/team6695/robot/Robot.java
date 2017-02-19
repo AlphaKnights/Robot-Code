@@ -196,8 +196,13 @@ public class Robot extends IterativeRobot {
 
 	/** Climber */
 	Boolean holding = false;
+	Boolean PrevHolding = false;
 
 	public void climb() {
+		boolean button = xbox.getRawButton(Config.ClimbHoldButton);
+	
+		if (button && !PrevHolding) holding = !holding;
+		PrevHolding=button;
 		if (!holding) {
 			if (Config.logging) System.out.println("Climb Motor current:" + climbMotor.getOutputCurrent());
 
@@ -206,7 +211,10 @@ public class Robot extends IterativeRobot {
 			if ((xbox.getPOV() == Config.climbButtonSlowDown) && (climbSpeed <= -1))
 				climbSpeed = climbSpeed - Config.climbInc;
 			if (climbMotor.getOutputCurrent() >= Config.climbMaxCurrent) climbMotor.set(climbSpeed);
+		}else{
+			climbMotor.set(Config.holdSpeed);
 		}
+			
 	}
 
 	/** Ball Conveyer Belt */
