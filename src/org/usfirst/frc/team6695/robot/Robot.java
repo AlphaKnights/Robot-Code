@@ -2,12 +2,13 @@ package org.usfirst.frc.team6695.robot;
 
 import com.ctre.CANTalon;
 
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Ultrasonic;
-// TODO import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
@@ -25,12 +26,14 @@ public class Robot extends IterativeRobot {
 	CANTalon beltMotor;
 	/** Drive configuration for robot drivetrain */
 	AlphaDrive drivetrain;
-	// sample encoder code
-	Encoder leftChannelEnc = new Encoder(0, 1, false, Encoder.EncodingType.k2X);
-	Encoder rightChannelEnc = new Encoder(2, 3, false, Encoder.EncodingType.k2X);
 	int avgCount;
 	double avgLinearDistance;
 	double avgSpeed;
+	/** Drivetrain distance traveled measurement */
+	Encoder drivetrainEncLeft = new Encoder(Config.encoderLeftPortA, Config.encoderLeftPortB, false, EncodingType.k2X);
+	Encoder drivetrainEncRight = new Encoder(Config.encoderRightPortA, Config.encoderRightPortB, false,
+			EncodingType.k2X);
+	int encUnit = Config.encUnit;
 	/** Drive configuration for ball motors */
 	RobotDrive ballDrive;
 
@@ -46,6 +49,9 @@ public class Robot extends IterativeRobot {
 	boolean isBelting = false;
 	boolean prevBeltButton = false;
 	boolean prevBallShooter = false;
+
+	Ultrasonic uss = new Ultrasonic(8, 9);
+
 	// TODO Implement timers
 	// Timer myTimer = new Timer();
 	// myTimer.start();
@@ -57,7 +63,7 @@ public class Robot extends IterativeRobot {
 
 	/**
 	 * Initialize instance variables from property file
-	 * 
+	 *
 	 * @see Config
 	 */
 	public void configSetup() {
@@ -65,6 +71,7 @@ public class Robot extends IterativeRobot {
 		/** Initialize joystick and xbox controller input */
 		logitechJoy = new Joystick(Config.joystick);
 		xbox = new XboxController(Config.xbox);
+		ballThrottle = Config.baseBallThrottle;
 
 		/** Initialize robot drivetrain configuration */
 		drivetrain = new AlphaDrive(Config.driveMotorLeftChannel, Config.driveMotorRightChannel);
@@ -73,7 +80,8 @@ public class Robot extends IterativeRobot {
 
 		/** Initialize climbing mechanism motor configuration */
 		climbMotor = new CANTalon(Config.climbMotor);
-		/** Configure climbing mechanism maximum power draw */
+
+		beltMotor = new CANTalon(Config.ballStirMotor);
 	}
 
 	/**
@@ -88,16 +96,53 @@ public class Robot extends IterativeRobot {
 	/** This function is run once each time the robot enters autonomous mode */
 	@Override
 	public void autonomousInit() {
-		// TODO Implement Timer
+		// INITIALIZE COUNTER
+		drivetrainEncLeft.reset();
+		// STAGE 1a
+		// TODO implement way to differentiate between start locations
+		// if position == A / C (far sides of start area)
+		// move in straight line until baseline crossed
+		while (drivetrainEncLeft.get() < 10 * encUnit) { // count ~~ meter *
+															// (count
+															// / meter)
+			drivetrain.setLeftRightMotorOutputs(0.6, 0.6); // arbitrary speed
+															// values
+		}
+		// STAGE 1b
+		// else
+		// turn 45 degrees
+		// move forward until intersecting the path of position A / C
+		// turn -45 degrees
+		// move in straight line until baseline crossed
+
+		// INITIALIZE COUNTER
+		drivetrainEncLeft.reset();
+		// STAGE 2
+		// reverse some distance to reach airship
+		while (drivetrainEncLeft.get() < 3 * encUnit) {
+			drivetrain.setLeftRightMotorOutputs(-0.6, -0.6);
+		}
+		// turn some amount towards airship
+		Timer turnTimer = new Timer();
+		turnTimer.start();
+		// TODO find how many milliseconds it takes to turn 90 degrees
+		// then derive formula for turn time from experimental data
+		while (turnTimer.get() < 100000) { // 100 milliseconds
+			drivetrain.setLeftRightMotorOutputs(0.6, -0.6); // polarity depends
+															// on orientation
+		}
+		// INITIALIZE COUNTER
+		drivetrainEncLeft.reset();
+		// STAGE 3
+		// drive into airship
+		while (drivetrainEncLeft.get() < 3 * encUnit) {
+			drivetrain.setLeftRightMotorOutputs(0.6, -0.6);
+		}
 	}
 
 	/** This function is called periodically during autonomous */
 	@Override
 	public void autonomousPeriodic() {
-		// TODO Make Autonomous work...
-		avgCount = (leftChannelEnc.get() + rightChannelEnc.get()) / 2;
-		avgLinearDistance = (leftChannelEnc.getDistance() + rightChannelEnc.getDistance()) / 2;
-		avgSpeed = (leftChannelEnc.getRate() + rightChannelEnc.getRate()) / 2;
 	}
 
 	/**
@@ -107,27 +152,27 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopInit() {
 		System.out.println("Hello World");
-		ballThrottle = Config.baseBallThrottle;
 	}
 
 	/** This function is called periodically during operator control */
 	@Override
 	public void teleopPeriodic() {
+		// System.out.println(uss.getRangeInches());
 		climb();
 		drive();
-		shoot();
+		shoot(false);
 		ballConveyorBelt();
-
-		/** Implement xbox controller main button usage */
-		boolean buttonA = xbox.getRawButton(1);
-		boolean buttonB = xbox.getRawButton(2);
-
-		if (buttonA) System.out.println("pressedA");
-		if (buttonB) System.out.println("pressedB");
+		eStop();
 	}
 
-	/** Ball Shooter Code */
-	public void shoot() {
+	/**
+	 * Ball Shooter Code
+	 * 
+	 * @param useUltrasonic
+	 *            True if ultrasonic should be used to calculate shoot speed.
+	 *            DOES NOT WORK. Keep False
+	 **/
+	public void shoot(boolean useUltrasonic) {
 		boolean ballShoot = xbox.getRawButton(Config.ballShootButton);
 
 		if (ballShoot && !prevBallShooter) prevBallShooter = !prevBallShooter;
@@ -154,12 +199,26 @@ public class Robot extends IterativeRobot {
 	}
 
 	/** Climber */
+	Boolean holding = false;
+	Boolean PrevHolding = false;
+
 	public void climb() {
-		if ((xbox.getPOV() == Config.climbButtonSpeedUp) && (climbSpeed <= 1))
-			climbSpeed = climbSpeed + Config.climbInc;
-		if ((xbox.getPOV() == Config.climbButtonSlowDown) && (climbSpeed <= -1))
-			climbSpeed = climbSpeed - Config.climbInc;
-		if (climbMotor.getOutputCurrent() >= Config.climbMaxCurrent) climbMotor.set(climbSpeed);
+		boolean button = xbox.getRawButton(Config.ClimbHoldButton);
+	
+		if (button && !PrevHolding) holding = !holding;
+		PrevHolding=button;
+		if (!holding) {
+			if (Config.logging) System.out.println("Climb Motor current:" + climbMotor.getOutputCurrent());
+
+			if ((xbox.getPOV() == Config.climbButtonSpeedUp) && (climbSpeed <= 1))
+				climbSpeed = climbSpeed + Config.climbInc;
+			if ((xbox.getPOV() == Config.climbButtonSlowDown) && (climbSpeed <= -1))
+				climbSpeed = climbSpeed - Config.climbInc;
+			if (climbMotor.getOutputCurrent() >= Config.climbMaxCurrent) climbMotor.set(climbSpeed);
+		}else{
+			climbMotor.set(Config.holdSpeed);
+		}
+			
 	}
 
 	/** Ball Conveyer Belt */
@@ -174,8 +233,21 @@ public class Robot extends IterativeRobot {
 		else beltMotor.set(0.0);
 	}
 
-	/** This function is called periodically during test mode */
+	/** If stop button is clicked, stop robot functions **/
+	public void eStop() {
+		if (Config.allowEStop) {
+			if (xbox.getStartButton()) {
+				drivetrain.setMaxOutput(0);
+				ballDrive.setMaxOutput(0);
+				beltMotor.set(0);
+				beltMotor.disable();
+				climbMotor.set(0);
+				climbMotor.disable();
+			}
+		}
+	}
 
+	/** This function is called periodically during test mode */
 	@Override
 	public void testPeriodic() {
 		LiveWindow.run();
