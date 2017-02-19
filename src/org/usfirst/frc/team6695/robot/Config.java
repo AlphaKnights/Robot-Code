@@ -43,4 +43,6 @@ final public class Config {
 	static int ballLowerSpeedButton = XboxButtonID.LB.value();
 	/** Button to speed up the ball shooter */
 	static int ballFasterSpeedButton = XboxButtonID.RB.value();
+	/** Drivetrain encoder unit definition (counts / meter)*/
+	static int encUnit = 100; // TODO requires testing, means nothing atm
 }
