@@ -57,4 +57,6 @@ final public class Config {
 	static int encoderLeftPortB = 3;
 	/** Drivetrain encoder unit definition (counts / meter) */
 	static int encUnit = 100; // TODO requires testing, means nothing atm
+	/** Ball Stir Motor */
+	static int ballStirMotor = 4;
 }

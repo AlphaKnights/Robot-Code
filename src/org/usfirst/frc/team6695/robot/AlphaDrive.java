@@ -96,34 +96,5 @@ public class AlphaDrive extends RobotDrive {
 		throttle = 1 - throttle;
 		setLeftRightMotorOutputs(leftMotorSpeed * throttle, rightMotorSpeed * throttle);
 	}
-	
-	/**
-	   * Set the speed of the right and left motors. This is used once an appropriate drive setup
-	   * function is called such as twoWheelDrive(). The motors are set to "leftSpeed" and
-	   * "rightSpeed" and includes flipping the direction of one side for opposing motors.
-	   *
-	   * @param leftOutput  The speed to send to the left side of the robot.
-	   * @param rightOutput The speed to send to the right side of the robot.
-	   */
-	@Override
-	  public void setLeftRightMotorOutputs(double leftOutput, double rightOutput) {
-	    if (m_rearLeftMotor == null || m_rearRightMotor == null) {
-	      throw new NullPointerException("Null motor provided");
-	    }
-
-	    if (m_frontLeftMotor != null) {
-	      m_frontLeftMotor.set(limit(leftOutput) * m_maxOutput);
-	    }
-	    m_rearLeftMotor.set(limit(leftOutput) * m_maxOutput);
-
-	    if (m_frontRightMotor != null) {
-	      m_frontRightMotor.set(-limit(rightOutput) * m_maxOutput);
-	    }
-	    m_rearRightMotor.set(-limit(rightOutput) * m_maxOutput);
-
-	    if (m_safetyHelper != null) {
-	      m_safetyHelper.feed();
-	    }
-	  }
 
 }
