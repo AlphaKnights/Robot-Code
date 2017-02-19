@@ -28,9 +28,6 @@ public class Robot extends IterativeRobot {
 	/** Drivetrain distance traveled measurement */
 	Encoder drivetrainEnc;
 	int encUnit;
-	boolean isAutonomous1aFinished = false;
-	boolean isAutonomous1bFinished = false;
-	boolean isAutonomous2Finished = false;
 	/** Drive configuration for ball motors */
 	RobotDrive ballDrive;
 
