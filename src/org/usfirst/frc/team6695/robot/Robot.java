@@ -48,6 +48,7 @@ public class Robot extends IterativeRobot {
 	/** Controls ball hopper belt state */
 	boolean isBelting = false;
 	boolean prevBeltButton = false;
+	boolean prevBallShooter = false;
 
 	Ultrasonic uss = new Ultrasonic(8, 9);
 
@@ -173,11 +174,14 @@ public class Robot extends IterativeRobot {
 	 **/
 	public void shoot(boolean useUltrasonic) {
 		boolean ballShoot = xbox.getRawButton(Config.ballShootButton);
+
+		if (ballShoot && !prevBallShooter) prevBallShooter = !prevBallShooter;
+		prevBallShooter = ballShoot;
 		boolean lowerSpeed = xbox.getRawButton(Config.ballLowerSpeedButton);
 		boolean fasterSpeed = xbox.getRawButton(Config.ballFasterSpeedButton);
-		if (useUltrasonic) {
-			System.out.println(uss.getRangeMM());
-		} else {
+		if (ballShoot && !prevBallShooter) {
+			ballDrive.drive(-1, 0);
+		} else if (ballShoot && prevBallShooter) {
 
 			if (lowerSpeed) ballThrottle -= Config.deltaBallThrottle;
 			if (fasterSpeed) ballThrottle += Config.deltaBallThrottle;
