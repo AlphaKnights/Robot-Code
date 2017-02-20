@@ -34,6 +34,7 @@ public class Robot extends IterativeRobot {
 	Encoder drivetrainEncRight = new Encoder(Config.encoderRightPortA, Config.encoderRightPortB, false,
 			EncodingType.k2X);
 	int encUnit = Config.encUnit;
+	int lastCount = 0;
 	/** Drive configuration for ball motors */
 	RobotDrive ballDrive;
 
@@ -158,6 +159,11 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		// System.out.println(uss.getRangeInches());
+		lastCount = drivetrainEncLeft.get();
+		if (lastCount != drivetrainEncLeft.get()) {
+			lastCount = drivetrainEncLeft.get();
+			System.out.println("Left Encoder Count: " + lastCount);
+		}
 		climb();
 		drive();
 		shoot(false);
