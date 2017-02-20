@@ -233,7 +233,7 @@ public class Robot extends IterativeRobot {
 			if ((xbox.getPOV() == Config.climbButtonSpeedUp) && (climbSpeed <= 1))
 				climbSpeed = climbSpeed + Config.climbInc;
 
-			if ((xbox.getPOV() == Config.climbButtonSlowDown) && (climbSpeed <= -1))
+			if ((xbox.getPOV() == Config.climbButtonSlowDown) && (climbSpeed >= -1))
 				climbSpeed = climbSpeed - Config.climbInc;
 
 			if (climbMotor.getOutputCurrent() <= Config.climbMaxCurrent) climbMotor.set(climbSpeed);

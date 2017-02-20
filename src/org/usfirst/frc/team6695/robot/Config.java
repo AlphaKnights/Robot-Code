@@ -57,11 +57,11 @@ public final class Config {
 
 	// DELTAs
 	/** How much to increment climb speed */
-	static double climbInc = 0.03;
+	static double climbInc = 0.05;
 	/** Start speed of ball launcher */
 	static double baseBallThrottle = 0.5;
 	/** How much to change ball speed by per click */
-	static double deltaBallThrottle = 0.03;
+	static double deltaBallThrottle = 0.01;
 
 	// Speeds
 	/** speed of belt */
