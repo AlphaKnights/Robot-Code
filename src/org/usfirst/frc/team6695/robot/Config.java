@@ -14,11 +14,11 @@ public final class Config {
 	/** Right Side PWM port */
 	static int driveMotorRightChannel = 1;
 	/** Ball shooter motor 1 */
-	static int ballMotor1 = 1;
+	static int ballMotor1 = 2;
 	/** Ball Shooter motor 2 */
-	static int ballMotor2 = 2;
+	static int ballMotor2 = 3;
 	/** Climb Motor */
-	static int climbMotor = 3;
+	static int climbMotor = 1;
 	/** Ball Stir Motor */
 	static int ballStirMotor = 4;
 
@@ -71,7 +71,7 @@ public final class Config {
 
 	// Maxumums
 	/** Max Current of climb motor */
-	static double climbMaxCurrent = 1.0; // TODO FIND MAX CURRENT
+	static double climbMaxCurrent = 100000.0; // TODO FIND MAX CURRENT
 
 	// Other....
 	/** Should we allow estop? Only for testing IMO **/
@@ -79,5 +79,5 @@ public final class Config {
 	/** Drivetrain encoder unit definition (counts / meter) */
 	static int encUnit = 100; // TODO requires testing, means nothing atm
 	/** True/False for logging */
-	static boolean logging = true;
+	static boolean logging = false;
 }
