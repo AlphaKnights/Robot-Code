@@ -2,10 +2,15 @@ package org.usfirst.frc.team6695.robot;
 
 import com.ctre.CANTalon;
 
+import edu.wpi.cscore.CameraServerJNI;
+import edu.wpi.cscore.MjpegServer;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.Timer;
@@ -37,7 +42,7 @@ public class Robot extends IterativeRobot {
 	int lastCount = 0;
 	/** Drive configuration for ball motors */
 	RobotDrive ballDrive;
-
+	PowerDistributionPanel pdp = new PowerDistributionPanel();
 	/** Controls climbing state */
 	boolean isClimbing = false;
 
@@ -53,6 +58,8 @@ public class Robot extends IterativeRobot {
 
 	Ultrasonic uss = new Ultrasonic(8, 9);
 
+	// UsbCamera cam = new UsbCamera("cam0", 0);
+	// MjpegServer mjpegServer = new MjpegServer("USB CAM", 1181);
 	// TODO Implement timers
 	// Timer myTimer = new Timer();
 	// myTimer.start();
@@ -68,6 +75,7 @@ public class Robot extends IterativeRobot {
 	 * @see Config
 	 */
 	public void configSetup() {
+		// mjpegServer.setSource(cam);
 		System.out.println("Starting UP");
 		/** Initialize joystick and xbox controller input */
 		logitechJoy = new Joystick(Config.joystick);
@@ -91,6 +99,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
+		CameraServer.getInstance().startAutomaticCapture();
 		configSetup();
 	}
 
@@ -164,6 +173,8 @@ public class Robot extends IterativeRobot {
 			lastCount = drivetrainEncLeft.get();
 			System.out.println("Left Encoder Count: " + lastCount);
 		}
+		if (Config.logging) System.out.println("Total Current: " + pdp.getTotalCurrent());
+
 		climb();
 		drive();
 		shoot(false);
@@ -210,34 +221,25 @@ public class Robot extends IterativeRobot {
 	Boolean PrevHolding = false;
 
 	public void climb() {
-		System.out.println("Climb start");
 		boolean button = xbox.getRawButton(Config.ClimbHoldButton);
 
 		if (button && !PrevHolding) holding = !holding;
 		PrevHolding = button;
+		if (Config.logging) System.out.println("Motor Current: " + climbMotor.getOutputCurrent());
 
 		if (!holding) {
-			System.out.println("In !holding if statment");
 			if (Config.logging) System.out.println("Climb Motor Current:" + climbMotor.getOutputCurrent());
 
-			if ((xbox.getPOV() == Config.climbButtonSpeedUp) && (climbSpeed <= 1)) {
+			if ((xbox.getPOV() == Config.climbButtonSpeedUp) && (climbSpeed <= 1))
 				climbSpeed = climbSpeed + Config.climbInc;
-				System.out.println("In increase speed");
 
-			}
-			if ((xbox.getPOV() == Config.climbButtonSlowDown) && (climbSpeed <= -1)) {
+			if ((xbox.getPOV() == Config.climbButtonSlowDown) && (climbSpeed <= -1))
 				climbSpeed = climbSpeed - Config.climbInc;
-				System.out.println("In decrease speed");
-			}
-			if (climbMotor.getOutputCurrent() >= Config.climbMaxCurrent) {
-				climbMotor.set(climbSpeed);
-				System.out.println("Setting climb speed");
-			} else {
-				climbMotor.set(0);
-				System.out.println("Setting climb speed to 0");
-			}
+
+			if (climbMotor.getOutputCurrent() <= Config.climbMaxCurrent) climbMotor.set(climbSpeed);
+			else climbMotor.set(0);
+
 		} else {
-			System.out.println("Hold speed");
 			climbMotor.set(Config.holdSpeed);
 		}
 

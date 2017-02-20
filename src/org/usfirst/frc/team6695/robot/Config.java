@@ -57,11 +57,11 @@ public final class Config {
 
 	// DELTAs
 	/** How much to increment climb speed */
-	static double climbInc = 0.1;
+	static double climbInc = 0.03;
 	/** Start speed of ball launcher */
 	static double baseBallThrottle = 0.5;
 	/** How much to change ball speed by per click */
-	static double deltaBallThrottle = 0.05;
+	static double deltaBallThrottle = 0.03;
 
 	// Speeds
 	/** speed of belt */
@@ -79,5 +79,5 @@ public final class Config {
 	/** Drivetrain encoder unit definition (counts / meter) */
 	static int encUnit = 100; // TODO requires testing, means nothing atm
 	/** True/False for logging */
-	static boolean logging = false;
+	static boolean logging = true;
 }
