@@ -94,7 +94,7 @@ public class AlphaDrive extends RobotDrive {
 			}
 		}
 		throttle = 1 - throttle;
-		setLeftRightMotorOutputs(leftMotorSpeed * throttle, rightMotorSpeed * throttle);
+		setLeftRightMotorOutputs(rightMotorSpeed * throttle, leftMotorSpeed * throttle);
 	}
 
 }

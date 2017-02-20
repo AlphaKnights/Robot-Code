@@ -180,9 +180,10 @@ public class Robot extends IterativeRobot {
 		boolean lowerSpeed = xbox.getRawButton(Config.ballLowerSpeedButton);
 		boolean fasterSpeed = xbox.getRawButton(Config.ballFasterSpeedButton);
 		if (ballShoot && !prevBallShooter) {
+			System.out.println("Ball backword");
 			ballDrive.drive(-1, 0);
 		} else if (ballShoot && prevBallShooter) {
-
+			System.out.print("BF");
 			if (lowerSpeed) ballThrottle -= Config.deltaBallThrottle;
 			if (fasterSpeed) ballThrottle += Config.deltaBallThrottle;
 			if (ballShoot) ballDrive.drive(ballThrottle, 0.0);
