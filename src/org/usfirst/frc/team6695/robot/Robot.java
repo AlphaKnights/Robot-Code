@@ -186,7 +186,7 @@ public class Robot extends IterativeRobot {
 			System.out.print("BF");
 			if (lowerSpeed) ballThrottle -= Config.deltaBallThrottle;
 			if (fasterSpeed) ballThrottle += Config.deltaBallThrottle;
-			if (ballShoot) ballDrive.drive(ballThrottle, 0.0);
+			if (ballShoot) ballDrive.drive(-ballThrottle, 0.0);
 			else ballDrive.drive(0.0, 0.0);
 		}
 	}
@@ -204,19 +204,34 @@ public class Robot extends IterativeRobot {
 	Boolean PrevHolding = false;
 
 	public void climb() {
+		System.out.println("Climb start");
 		boolean button = xbox.getRawButton(Config.ClimbHoldButton);
 
 		if (button && !PrevHolding) holding = !holding;
 		PrevHolding = button;
+
 		if (!holding) {
+			System.out.println("In !Holding If statment");
 			if (Config.logging) System.out.println("Climb Motor current:" + climbMotor.getOutputCurrent());
 
-			if ((xbox.getPOV() == Config.climbButtonSpeedUp) && (climbSpeed <= 1))
+			if ((xbox.getPOV() == Config.climbButtonSpeedUp) && (climbSpeed <= 1)) {
 				climbSpeed = climbSpeed + Config.climbInc;
-			if ((xbox.getPOV() == Config.climbButtonSlowDown) && (climbSpeed <= -1))
+				System.out.println("in increese speed");
+
+			}
+			if ((xbox.getPOV() == Config.climbButtonSlowDown) && (climbSpeed <= -1)) {
 				climbSpeed = climbSpeed - Config.climbInc;
-			if (climbMotor.getOutputCurrent() >= Config.climbMaxCurrent) climbMotor.set(climbSpeed);
+				System.out.println("In decreese speed");
+			}
+			if (climbMotor.getOutputCurrent() >= Config.climbMaxCurrent) {
+				climbMotor.set(climbSpeed);
+				System.out.println("Setting Climb Speed");
+			} else {
+				climbMotor.set(0);
+				System.out.println("Setting climb speed to 0");
+			}
 		} else {
+			System.out.println("Hold Speed");
 			climbMotor.set(Config.holdSpeed);
 		}
 
