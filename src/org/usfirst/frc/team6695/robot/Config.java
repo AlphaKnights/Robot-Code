@@ -36,6 +36,12 @@ public final class Config {
 	static int ballLowerSpeedButton = XboxButtonID.LB.value();
 	/** Button to speed up the ball shooter */
 	static int ballFasterSpeedButton = XboxButtonID.RB.value();
+	/** EStop Button */
+	static int eStopButton = XboxButtonID.Back.value();
+	/** EStart Button */
+	static int eStartButton = XboxButtonID.A.value();
+	/** Button To get Speed */
+	static int getSpeed = XboxButtonID.B.value();
 
 	// INPUTS
 	/** Joystick Port */
@@ -65,7 +71,7 @@ public final class Config {
 
 	// Speeds
 	/** speed of belt */
-	static double beltSpeed = 0.2;
+	static double beltSpeed = 1;
 	/** Speed To go when holding */
 	static double holdSpeed = 0.0;// TODO FIND SPEED
 
@@ -79,5 +85,6 @@ public final class Config {
 	/** Drivetrain encoder unit definition (counts / meter) */
 	static int encUnit = 100; // TODO requires testing, means nothing atm
 	/** True/False for logging */
-	static boolean logging = true;
+	static boolean logging = false;
+
 }

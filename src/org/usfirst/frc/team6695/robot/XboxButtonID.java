@@ -7,8 +7,8 @@ package org.usfirst.frc.team6695.robot;
  * @see XboxPOVID
  */
 public enum XboxButtonID {
-	A(0),
-	B(1),
+	A(1),
+	B(2),
 	X(3),
 	Y(4),
 	LB(5),

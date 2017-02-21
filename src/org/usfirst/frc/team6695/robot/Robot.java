@@ -2,9 +2,6 @@ package org.usfirst.frc.team6695.robot;
 
 import com.ctre.CANTalon;
 
-import edu.wpi.cscore.CameraServerJNI;
-import edu.wpi.cscore.MjpegServer;
-import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
@@ -13,7 +10,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Ultrasonic;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
@@ -38,10 +34,10 @@ public class Robot extends IterativeRobot {
 	Encoder drivetrainEncLeft = new Encoder(Config.encoderLeftPortA, Config.encoderLeftPortB, false, EncodingType.k2X);
 	Encoder drivetrainEncRight = new Encoder(Config.encoderRightPortA, Config.encoderRightPortB, false,
 			EncodingType.k2X);
-	int encUnit = Config.encUnit;
 	int lastCount = 0;
 	/** Drive configuration for ball motors */
 	RobotDrive ballDrive;
+	/** Power Distribution Panel */
 	PowerDistributionPanel pdp = new PowerDistributionPanel();
 	/** Controls climbing state */
 	boolean isClimbing = false;
@@ -106,48 +102,8 @@ public class Robot extends IterativeRobot {
 	/** This function is run once each time the robot enters autonomous mode */
 	@Override
 	public void autonomousInit() {
-		// INITIALIZE COUNTER
-		drivetrainEncLeft.reset();
-		// STAGE 1a
-		// TODO implement way to differentiate between start locations
-		// if position == A / C (far sides of start area)
-		// move in straight line until baseline crossed
-		while (drivetrainEncLeft.get() < 10 * encUnit) { // count ~~ meter *
-															// (count
-															// / meter)
-			drivetrain.setLeftRightMotorOutputs(0.6, 0.6); // arbitrary speed
-															// values
-		}
-		// STAGE 1b
-		// else
-		// turn 45 degrees
-		// move forward until intersecting the path of position A / C
-		// turn -45 degrees
-		// move in straight line until baseline crossed
+		automousOne();
 
-		// INITIALIZE COUNTER
-		drivetrainEncLeft.reset();
-		// STAGE 2
-		// reverse some distance to reach airship
-		while (drivetrainEncLeft.get() < 3 * encUnit) {
-			drivetrain.setLeftRightMotorOutputs(-0.6, -0.6);
-		}
-		// turn some amount towards airship
-		Timer turnTimer = new Timer();
-		turnTimer.start();
-		// TODO find how many milliseconds it takes to turn 90 degrees
-		// then derive formula for turn time from experimental data
-		while (turnTimer.get() < 100000) { // 100 milliseconds
-			drivetrain.setLeftRightMotorOutputs(0.6, -0.6); // polarity depends
-															// on orientation
-		}
-		// INITIALIZE COUNTER
-		drivetrainEncLeft.reset();
-		// STAGE 3
-		// drive into airship
-		while (drivetrainEncLeft.get() < 3 * encUnit) {
-			drivetrain.setLeftRightMotorOutputs(0.6, -0.6);
-		}
 	}
 
 	/** This function is called periodically during autonomous */
@@ -162,25 +118,49 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopInit() {
 		System.out.println("Hello World");
+		drivetrainEncLeft.reset();
+		drivetrainEncRight.reset();
+		// while (drivetrainEncLeft.getDistance() > 3 * 100) {
+		// drivetrain.drive(.4, 0);
+		// }
+		// drivetrain.setLeftRightMotorOutputs(0, 0);
 	}
 
 	/** This function is called periodically during operator control */
 	@Override
 	public void teleopPeriodic() {
-		// System.out.println(uss.getRangeInches());
-		lastCount = drivetrainEncLeft.get();
-		if (lastCount != drivetrainEncLeft.get()) {
-			lastCount = drivetrainEncLeft.get();
-			System.out.println("Left Encoder Count: " + lastCount);
-		}
-		if (Config.logging) System.out.println("Total Current: " + pdp.getTotalCurrent());
+//		System.out.println(drivetrainEncLeft.getDistance());
+//
+//		System.out.println("loop");
+//
+//		if (xbox.getAButton()) {
+//			drivetrain.drive(-.3, 0);
+//		} else {
+//			drivetrain.drive(0, 0);
+//		}
 
-		climb();
-		drive();
-		shoot(false);
-		ballConveyorBelt();
-		eStop();
+		// // System.out.println(uss.getRangeInches());
+		// lastCount = drivetrainEncLeft.get();
+		// if (lastCount != drivetrainEncLeft.get()) {
+		// lastCount = drivetrainEncLeft.get();
+		// System.out.println("Left Encoder Count: " + lastCount);
+		// }
+		// System.err.println(drivetrainEncLeft.getDistance());
+		// if (Config.logging) System.out.println("Total Current: " +
+		// pdp.getTotalCurrent());
+		//
+		 climb();
+		 drive();
+		 shoot(false);
+		 ballConveyorBelt();
+		 eStop();
+		 getSpeeds();
 	}
+
+	/** Lower Speed pre */
+	boolean lsp = false;
+	/** inc speed pre */
+	boolean isp = false;
 
 	/**
 	 * Ball Shooter Code
@@ -201,11 +181,13 @@ public class Robot extends IterativeRobot {
 			ballDrive.drive(-1, 0);
 		} else if (ballShoot && prevBallShooter) {
 			System.out.print("Ball forward");
-			if (lowerSpeed) ballThrottle -= Config.deltaBallThrottle;
-			if (fasterSpeed) ballThrottle += Config.deltaBallThrottle;
+			if (lowerSpeed && !lsp) ballThrottle -= Config.deltaBallThrottle;
+			if (fasterSpeed && !isp) ballThrottle += Config.deltaBallThrottle;
 			if (ballShoot) ballDrive.drive(-ballThrottle, 0.0);
 			else ballDrive.drive(0.0, 0.0);
 		}
+		lsp = lowerSpeed;
+		isp = fasterSpeed;
 	}
 
 	/**
@@ -249,9 +231,9 @@ public class Robot extends IterativeRobot {
 	public void ballConveyorBelt() {
 		// check for toggle of belt button
 		boolean button = xbox.getRawButton(Config.beltButton);
+		if (button && !prevBeltButton) isBelting = !isBelting;
 		if (button) prevBeltButton = true;
 		else prevBeltButton = false;
-		if (button && !prevBeltButton) isBelting = !isBelting;
 		// turn on and off belt motor
 		if (isBelting) beltMotor.set(Config.beltSpeed);
 		else beltMotor.set(0.0);
@@ -260,7 +242,8 @@ public class Robot extends IterativeRobot {
 	/** If stop button is clicked, stop robot functions **/
 	public void eStop() {
 		if (Config.allowEStop) {
-			if (xbox.getStartButton()) {
+			if (xbox.getRawButton(Config.eStopButton)) {
+				System.err.println("ESTOP");
 				drivetrain.setMaxOutput(0);
 				ballDrive.setMaxOutput(0);
 				beltMotor.set(0);
@@ -268,6 +251,74 @@ public class Robot extends IterativeRobot {
 				climbMotor.set(0);
 				climbMotor.disable();
 			}
+			if (xbox.getRawButton(Config.eStartButton)) {
+				System.err.println("ESTART");
+				drivetrain.setMaxOutput(1);
+				ballDrive.setMaxOutput(1);
+				beltMotor.enable();
+				climbMotor.enable();
+			}
+
+		}
+	}
+
+	public void DriveDistance(double speed, double meters) {
+		drivetrainEncLeft.reset();
+		while (drivetrainEncLeft.getDistance() < meters * Config.encUnit)
+			drivetrain.setLeftRightMotorOutputs(speed, speed);
+	}
+
+	public void automousOne() {
+		// INITIALIZE COUNTER
+		drivetrainEncLeft.reset();
+		// STAGE 1a
+		// TODO implement way to differentiate between start locations
+		// if position == A / C (far sides of start area)
+		// move in straight line until baseline crossed
+		while (drivetrainEncLeft.get() < 10 * Config.encUnit) { // count ~~
+																// meter *
+			// (count
+			// / meter)
+			drivetrain.setLeftRightMotorOutputs(0.5, 0.5); // arbitrary speed
+															// values
+		}
+		// STAGE 1b
+		// else
+		// turn 45 degrees
+		// move forward until intersecting the path of position A / C
+		// turn -45 degrees
+		// move in straight line until baseline crossed
+
+		// INITIALIZE COUNTER
+		drivetrainEncLeft.reset();
+		// STAGE 2
+		// reverse some distance to reach airship
+		while (drivetrainEncLeft.get() < 3 * Config.encUnit) {
+			drivetrain.setLeftRightMotorOutputs(-0.6, -0.6);
+		}
+		// turn some amount towards airship
+		// Timer turnTimer = new Timer();
+		// turnTimer.start();
+		// // TODO find how many milliseconds it takes to turn 90 degrees
+		// // then derive formula for turn time from experimental data
+		// while (turnTimer.get() < 100000) { // 100 milliseconds
+		// drivetrain.setLeftRightMotorOutputs(0.6, -0.6); // polarity depends
+		// // on orientation
+		// }
+		// INITIALIZE COUNTER
+		drivetrainEncLeft.reset();
+		// STAGE 3
+		// drive into airship
+		while (drivetrainEncLeft.get() < 3 * Config.encUnit) {
+			drivetrain.setLeftRightMotorOutputs(0.6, -0.6);
+		}
+
+	}
+
+	public void getSpeeds() {
+		if (xbox.getRawButton(Config.getSpeed)) {
+			System.out.println("Climb Speed: " + climbSpeed);
+			System.out.println("Ball Speed: " + ballThrottle);
 		}
 	}
 
