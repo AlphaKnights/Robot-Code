@@ -77,13 +77,13 @@ public final class Config {
 
 	// Maxumums
 	/** Max Current of climb motor */
-	static double climbMaxCurrent = 100000.0; // TODO FIND MAX CURRENT
+	static double climbMaxCurrent = 100000.0; //TODO FIND MAX CURRENT
 
 	// Other....
 	/** Should we allow estop? Only for testing IMO **/
 	static boolean allowEStop = true;
 	/** Drivetrain encoder unit definition (counts / meter) */
-	static int encUnit = 100; // TODO requires testing, means nothing atm
+	static double encUnit = -481.4; // TODO find foot / count conversion
 	/** True/False for logging */
 	static boolean logging = false;
 

@@ -3,6 +3,7 @@ package org.usfirst.frc.team6695.robot;
 import com.ctre.CANTalon;
 
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -56,9 +57,6 @@ public class Robot extends IterativeRobot {
 
 	// UsbCamera cam = new UsbCamera("cam0", 0);
 	// MjpegServer mjpegServer = new MjpegServer("USB CAM", 1181);
-	// TODO Implement timers
-	// Timer myTimer = new Timer();
-	// myTimer.start();
 
 	/** Container and modifiers for climbing mechanism speed */
 	double climbSpeed = 0.0;
@@ -102,8 +100,8 @@ public class Robot extends IterativeRobot {
 	/** This function is run once each time the robot enters autonomous mode */
 	@Override
 	public void autonomousInit() {
-		automousOne();
-
+		// autonomous();
+		DriveDistance(0.5, 10);
 	}
 
 	/** This function is called periodically during autonomous */
@@ -118,6 +116,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopInit() {
 		System.out.println("Hello World");
+		drivetrain.drive(0, 0);
 		drivetrainEncLeft.reset();
 		drivetrainEncRight.reset();
 		// while (drivetrainEncLeft.getDistance() > 3 * 100) {
@@ -127,34 +126,31 @@ public class Robot extends IterativeRobot {
 	}
 
 	/** This function is called periodically during operator control */
+	DigitalInput di = new DigitalInput(4);
+
 	@Override
 	public void teleopPeriodic() {
-//		System.out.println(drivetrainEncLeft.getDistance());
-//
-//		System.out.println("loop");
-//
-//		if (xbox.getAButton()) {
-//			drivetrain.drive(-.3, 0);
-//		} else {
-//			drivetrain.drive(0, 0);
-//		}
+		// System.out.println(drivetrainEncLeft.getDistance());
+		//
+		// System.out.println("loop");
+		//
+		// if (xbox.getAButton()) {
+		// drivetrain.drive(-.3, 0);
+		// } else {
+		// drivetrain.drive(0, 0);
+		// }
 
 		// // System.out.println(uss.getRangeInches());
-		// lastCount = drivetrainEncLeft.get();
-		// if (lastCount != drivetrainEncLeft.get()) {
-		// lastCount = drivetrainEncLeft.get();
-		// System.out.println("Left Encoder Count: " + lastCount);
-		// }
 		// System.err.println(drivetrainEncLeft.getDistance());
 		// if (Config.logging) System.out.println("Total Current: " +
 		// pdp.getTotalCurrent());
 		//
-		 climb();
-		 drive();
-		 shoot(false);
-		 ballConveyorBelt();
-		 eStop();
-		 getSpeeds();
+		climb();
+		drive();
+		shoot(false);
+		// ballConveyorBelt();
+		eStop();
+		// getSpeeds();
 	}
 
 	/** Lower Speed pre */
@@ -262,26 +258,20 @@ public class Robot extends IterativeRobot {
 		}
 	}
 
-	public void DriveDistance(double speed, double meters) {
+	public void DriveDistance(double speed, double feet) {
 		drivetrainEncLeft.reset();
-		while (drivetrainEncLeft.getDistance() < meters * Config.encUnit)
-			drivetrain.setLeftRightMotorOutputs(speed, speed);
+		while (Math.abs(drivetrainEncLeft.get()) < Math.abs(feet * Config.encUnit))
+			drivetrain.drive(speed, 0);
+		;
 	}
 
-	public void automousOne() {
-		// INITIALIZE COUNTER
-		drivetrainEncLeft.reset();
+	public void autonomous() {
 		// STAGE 1a
 		// TODO implement way to differentiate between start locations
 		// if position == A / C (far sides of start area)
 		// move in straight line until baseline crossed
-		while (drivetrainEncLeft.get() < 10 * Config.encUnit) { // count ~~
-																// meter *
-			// (count
-			// / meter)
-			drivetrain.setLeftRightMotorOutputs(0.5, 0.5); // arbitrary speed
-															// values
-		}
+		DriveDistance(0.5, 10);
+
 		// STAGE 1b
 		// else
 		// turn 45 degrees
@@ -289,29 +279,16 @@ public class Robot extends IterativeRobot {
 		// turn -45 degrees
 		// move in straight line until baseline crossed
 
-		// INITIALIZE COUNTER
-		drivetrainEncLeft.reset();
 		// STAGE 2
 		// reverse some distance to reach airship
-		while (drivetrainEncLeft.get() < 3 * Config.encUnit) {
-			drivetrain.setLeftRightMotorOutputs(-0.6, -0.6);
-		}
+		// DriveDistance(-0.6, -0.6, 3);
+
 		// turn some amount towards airship
-		// Timer turnTimer = new Timer();
-		// turnTimer.start();
-		// // TODO find how many milliseconds it takes to turn 90 degrees
-		// // then derive formula for turn time from experimental data
-		// while (turnTimer.get() < 100000) { // 100 milliseconds
-		// drivetrain.setLeftRightMotorOutputs(0.6, -0.6); // polarity depends
-		// // on orientation
-		// }
-		// INITIALIZE COUNTER
-		drivetrainEncLeft.reset();
+		// DriveDistance(-0.6, 0.6, 3);
+
 		// STAGE 3
 		// drive into airship
-		while (drivetrainEncLeft.get() < 3 * Config.encUnit) {
-			drivetrain.setLeftRightMotorOutputs(0.6, -0.6);
-		}
+		// DriveDistance(0.6, 0.6, 3);
 
 	}
 
