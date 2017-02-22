@@ -43,6 +43,8 @@ public final class Config {
 	/** Button To get Speed */
 	static int getSpeed = XboxButtonID.B.value();
 
+	static int getAppxBallButton = 1;
+
 	// INPUTS
 	/** Joystick Port */
 	static int joystick = 0;// TODO DEPENDS ON SIDE
@@ -50,8 +52,6 @@ public final class Config {
 	static int xbox = 1;// TODO DEPENDS ON SIDE
 
 	// DIO PORTS
-	/** DIO port for ultrasonic **/
-	static int ultrasonicPort = 4;
 	/** DIO Port #1 For Right Encoder */
 	static int encoderRightPortA = 0;
 	/** DIO Port #2 For Right Encoder */
@@ -60,6 +60,12 @@ public final class Config {
 	static int encoderLeftPortA = 2;
 	/** DIO Port #2 For Left Encoder */
 	static int encoderLeftPortB = 3;
+	/** Left Switch (For Auto) */
+	static int leftSwitchDIO = 4;
+	/** Right Switch (For Auto) */
+	static int rightSwitchDIO = 5;
+	/** DIO port for ultrasonic **/
+	static int ultrasonicPort = 6;
 
 	// DELTAs
 	/** How much to increment climb speed */
@@ -77,7 +83,7 @@ public final class Config {
 
 	// Maxumums
 	/** Max Current of climb motor */
-	static double climbMaxCurrent = 100000.0; //TODO FIND MAX CURRENT
+	static double climbMaxCurrent = 100000.0; // TODO FIND MAX CURRENT
 
 	// Other....
 	/** Should we allow estop? Only for testing IMO **/
@@ -86,5 +92,6 @@ public final class Config {
 	static double encUnit = -481.4; // TODO find foot / count conversion
 	/** True/False for logging */
 	static boolean logging = false;
+	static double speedDistanceRatio = .4;// TODO Find ratio
 
 }

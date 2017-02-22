@@ -31,11 +31,12 @@ public class Robot extends IterativeRobot {
 	int avgCount;
 	double avgLinearDistance;
 	double avgSpeed;
-	/** Drivetrain distance traveled measurement */
+	/** Drivetrain left distance traveled measurement */
 	Encoder drivetrainEncLeft = new Encoder(Config.encoderLeftPortA, Config.encoderLeftPortB, false, EncodingType.k2X);
+	/** Drivetrain right distance traveled measurement */
 	Encoder drivetrainEncRight = new Encoder(Config.encoderRightPortA, Config.encoderRightPortB, false,
 			EncodingType.k2X);
-	int lastCount = 0;
+	
 	/** Drive configuration for ball motors */
 	RobotDrive ballDrive;
 	/** Power Distribution Panel */
@@ -50,7 +51,9 @@ public class Robot extends IterativeRobot {
 
 	/** Controls ball hopper belt state */
 	boolean isBelting = false;
+	/** Belt Button Pushed Before this loop */
 	boolean prevBeltButton = false;
+	/** Ball Shoot button Pressed before */
 	boolean prevBallShooter = false;
 
 	/** Lower Speed pre (Ball shooter) */
@@ -58,8 +61,13 @@ public class Robot extends IterativeRobot {
 	/** inc speed pre (Ball shooter) */
 	boolean isp = false;
 
-	//Ultrasonic u = new Ultrasonic(0, 0)
-	
+	/** Ultrasonic Sensor */
+	Ultrasonic ultrasonic = new Ultrasonic(Config.ultrasonicPort, Config.ultrasonicPort);
+	/** Input for left switch */
+	DigitalInput leftSwitch = new DigitalInput(Config.leftSwitchDIO);
+	/** Input for right switch */
+	DigitalInput rightSwitch = new DigitalInput(Config.rightSwitchDIO);
+
 	/** Container and modifiers for climbing mechanism speed */
 	double climbSpeed = 0.0;
 	/** Container and modifiers for ball launching mechanism speed */
@@ -123,8 +131,6 @@ public class Robot extends IterativeRobot {
 	}
 
 	/** This function is called periodically during operator control */
-	DigitalInput di = new DigitalInput(4);
-
 	@Override
 	public void teleopPeriodic() {
 		// System.out.println(drivetrainEncLeft.getDistance());
@@ -144,10 +150,25 @@ public class Robot extends IterativeRobot {
 		//
 		climb();
 		drive();
-		shoot(false);
+		shoot();
 		// ballConveyorBelt();
 		eStop();
 		getSpeeds();
+		testUltrasonic();
+	}
+
+	public void testUltrasonic() {
+		ultrasonic.setEnabled(true);
+		System.out.println(ultrasonic.getRangeInches());
+	}
+
+	/** Approxomate the ball speed when button is clicked **/
+	public void APS() {
+		ultrasonic.setEnabled(true);
+		if (logitechJoy.getRawButton(Config.getAppxBallButton)) {
+			ballThrottle = (ultrasonic.getRangeInches() * Config.speedDistanceRatio);
+			System.out.println("Set Speed: " + ballThrottle);
+		}
 	}
 
 	/**
@@ -157,7 +178,7 @@ public class Robot extends IterativeRobot {
 	 *            True if ultrasonic should be used to calculate shoot speed.
 	 *            DOES NOT WORK. Keep False
 	 **/
-	public void shoot(boolean useUltrasonic) {
+	public void shoot() {
 		boolean ballShoot = xbox.getRawButton(Config.ballShootButton);
 
 		if (ballShoot && !prevBallShooter) prevBallShooter = !prevBallShooter;
@@ -216,6 +237,7 @@ public class Robot extends IterativeRobot {
 	}
 
 	/** Ball Conveyer Belt */
+	@Deprecated
 	public void ballConveyorBelt() {
 		// check for toggle of belt button
 		boolean button = xbox.getRawButton(Config.beltButton);
