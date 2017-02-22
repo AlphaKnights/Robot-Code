@@ -53,11 +53,13 @@ public class Robot extends IterativeRobot {
 	boolean prevBeltButton = false;
 	boolean prevBallShooter = false;
 
-	Ultrasonic uss = new Ultrasonic(8, 9);
+	/** Lower Speed pre (Ball shooter) */
+	boolean lsp = false;
+	/** inc speed pre (Ball shooter) */
+	boolean isp = false;
 
-	// UsbCamera cam = new UsbCamera("cam0", 0);
-	// MjpegServer mjpegServer = new MjpegServer("USB CAM", 1181);
-
+	//Ultrasonic u = new Ultrasonic(0, 0)
+	
 	/** Container and modifiers for climbing mechanism speed */
 	double climbSpeed = 0.0;
 	/** Container and modifiers for ball launching mechanism speed */
@@ -69,7 +71,6 @@ public class Robot extends IterativeRobot {
 	 * @see Config
 	 */
 	public void configSetup() {
-		// mjpegServer.setSource(cam);
 		System.out.println("Starting UP");
 		/** Initialize joystick and xbox controller input */
 		logitechJoy = new Joystick(Config.joystick);
@@ -119,10 +120,6 @@ public class Robot extends IterativeRobot {
 		drivetrain.drive(0, 0);
 		drivetrainEncLeft.reset();
 		drivetrainEncRight.reset();
-		// while (drivetrainEncLeft.getDistance() > 3 * 100) {
-		// drivetrain.drive(.4, 0);
-		// }
-		// drivetrain.setLeftRightMotorOutputs(0, 0);
 	}
 
 	/** This function is called periodically during operator control */
@@ -150,13 +147,8 @@ public class Robot extends IterativeRobot {
 		shoot(false);
 		// ballConveyorBelt();
 		eStop();
-		// getSpeeds();
+		getSpeeds();
 	}
-
-	/** Lower Speed pre */
-	boolean lsp = false;
-	/** inc speed pre */
-	boolean isp = false;
 
 	/**
 	 * Ball Shooter Code
