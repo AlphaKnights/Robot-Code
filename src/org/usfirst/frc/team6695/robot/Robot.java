@@ -34,39 +34,31 @@ public class Robot extends IterativeRobot {
 	/** Drivetrain right distance traveled measurement */
 	Encoder drivetrainEncRight = new Encoder(Config.encoderRightPortA, Config.encoderRightPortB, false,
 			EncodingType.k2X);
-
 	/** Drive configuration for ball motors */
 	RobotDrive ballDrive;
 	/** Power Distribution Panel */
 	PowerDistributionPanel pdp = new PowerDistributionPanel();
 	/** Controls climbing state */
 	boolean isClimbing = false;
-
 	/** Package for joystick control scheme */
 	Joystick logitechJoy;
 	/** Package for xbox controller control scheme */
 	XboxController xbox;
-
 	/** Controls ball hopper belt state */
 	boolean isBelting = false;
 	/** Belt Button Pushed Before this loop */
 	boolean prevBeltButton = false;
 	/** Ball Shoot button Pressed before */
 	boolean prevBallShooter = false;
-
 	/** Lower Speed pre (Ball shooter) */
 	boolean lsp = false;
 	/** inc speed pre (Ball shooter) */
 	boolean isp = false;
-
-	/** Ultrasonic Sensor */
-	//Ultrasonic ultrasonic = new Ultrasonic(Config.ultrasonicPort, Config.ultrasonicPort);
-
 	/** Container and modifiers for climbing mechanism speed */
 	double climbSpeed = 0.0;
 	/** Container and modifiers for ball launching mechanism speed */
 	double ballThrottle;
-
+	/** Get Button Info for auto */
 	ModeSelector ms = new ModeSelector(Config.leftSwitchDIO, Config.rightSwitchDIO);
 
 	/**
@@ -76,19 +68,12 @@ public class Robot extends IterativeRobot {
 	 */
 	public void configSetup() {
 		System.out.println("Starting UP");
-		/** Initialize joystick and xbox controller input */
 		logitechJoy = new Joystick(Config.joystick);
 		xbox = new XboxController(Config.xbox);
 		ballThrottle = Config.baseBallThrottle;
-
-		/** Initialize robot drivetrain configuration */
 		drivetrain = new AlphaDrive(Config.driveMotorLeftChannel, Config.driveMotorRightChannel);
-		/** Initialize ball launcher motor configuration */
 		ballDrive = new RobotDrive(new CANTalon(Config.ballMotor1), new CANTalon(Config.ballMotor2));
-
-		/** Initialize climbing mechanism motor configuration */
 		climbMotor = new CANTalon(Config.climbMotor);
-
 		beltMotor = new CANTalon(Config.ballStirMotor);
 	}
 
@@ -151,22 +136,22 @@ public class Robot extends IterativeRobot {
 		// ballConveyorBelt();
 		eStop();
 		getSpeeds();
-//		testUltrasonic();
+		// testUltrasonic();
 	}
 
-//	public void testUltrasonic() {
-//		ultrasonic.setEnabled(true);
-//		System.out.println(ultrasonic.getRangeInches());
-//	}
-//
-//	/** Approxomate the ball speed when button is clicked **/
-//	public void APS() {
-//		ultrasonic.setEnabled(true);
-//		if (logitechJoy.getRawButton(Config.getAppxBallButton)) {
-//			ballThrottle = (ultrasonic.getRangeInches() * Config.speedDistanceRatio);
-//			System.out.println("Set Speed: " + ballThrottle);
-//		}
-//	}
+	// public void testUltrasonic() {
+	// ultrasonic.setEnabled(true);
+	// System.out.println(ultrasonic.getRangeInches());
+	// }
+	//
+	// /** Approxomate the ball speed when button is clicked **/
+	// public void APS() {
+	// ultrasonic.setEnabled(true);
+	// if (logitechJoy.getRawButton(Config.getAppxBallButton)) {
+	// ballThrottle = (ultrasonic.getRangeInches() * Config.speedDistanceRatio);
+	// System.out.println("Set Speed: " + ballThrottle);
+	// }
+	// }
 
 	/**
 	 * Ball Shooter Code
