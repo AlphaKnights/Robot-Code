@@ -3,14 +3,12 @@ package org.usfirst.frc.team6695.robot;
 import com.ctre.CANTalon;
 
 import edu.wpi.first.wpilibj.CameraServer;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.RobotDrive;
-import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
@@ -36,7 +34,7 @@ public class Robot extends IterativeRobot {
 	/** Drivetrain right distance traveled measurement */
 	Encoder drivetrainEncRight = new Encoder(Config.encoderRightPortA, Config.encoderRightPortB, false,
 			EncodingType.k2X);
-	
+
 	/** Drive configuration for ball motors */
 	RobotDrive ballDrive;
 	/** Power Distribution Panel */
@@ -62,16 +60,14 @@ public class Robot extends IterativeRobot {
 	boolean isp = false;
 
 	/** Ultrasonic Sensor */
-	Ultrasonic ultrasonic = new Ultrasonic(Config.ultrasonicPort, Config.ultrasonicPort);
-	/** Input for left switch */
-	DigitalInput leftSwitch = new DigitalInput(Config.leftSwitchDIO);
-	/** Input for right switch */
-	DigitalInput rightSwitch = new DigitalInput(Config.rightSwitchDIO);
+	//Ultrasonic ultrasonic = new Ultrasonic(Config.ultrasonicPort, Config.ultrasonicPort);
 
 	/** Container and modifiers for climbing mechanism speed */
 	double climbSpeed = 0.0;
 	/** Container and modifiers for ball launching mechanism speed */
 	double ballThrottle;
+
+	ModeSelector ms = new ModeSelector(Config.leftSwitchDIO, Config.rightSwitchDIO);
 
 	/**
 	 * Initialize instance variables from property file
@@ -148,28 +144,29 @@ public class Robot extends IterativeRobot {
 		// if (Config.logging) System.out.println("Total Current: " +
 		// pdp.getTotalCurrent());
 		//
+		ms.getMode();
 		climb();
 		drive();
 		shoot();
 		// ballConveyorBelt();
 		eStop();
 		getSpeeds();
-		testUltrasonic();
+//		testUltrasonic();
 	}
 
-	public void testUltrasonic() {
-		ultrasonic.setEnabled(true);
-		System.out.println(ultrasonic.getRangeInches());
-	}
-
-	/** Approxomate the ball speed when button is clicked **/
-	public void APS() {
-		ultrasonic.setEnabled(true);
-		if (logitechJoy.getRawButton(Config.getAppxBallButton)) {
-			ballThrottle = (ultrasonic.getRangeInches() * Config.speedDistanceRatio);
-			System.out.println("Set Speed: " + ballThrottle);
-		}
-	}
+//	public void testUltrasonic() {
+//		ultrasonic.setEnabled(true);
+//		System.out.println(ultrasonic.getRangeInches());
+//	}
+//
+//	/** Approxomate the ball speed when button is clicked **/
+//	public void APS() {
+//		ultrasonic.setEnabled(true);
+//		if (logitechJoy.getRawButton(Config.getAppxBallButton)) {
+//			ballThrottle = (ultrasonic.getRangeInches() * Config.speedDistanceRatio);
+//			System.out.println("Set Speed: " + ballThrottle);
+//		}
+//	}
 
 	/**
 	 * Ball Shooter Code

@@ -61,9 +61,9 @@ public final class Config {
 	/** DIO Port #2 For Left Encoder */
 	static int encoderLeftPortB = 3;
 	/** Left Switch (For Auto) */
-	static int leftSwitchDIO = 4;
+	static int leftSwitchDIO = 8;
 	/** Right Switch (For Auto) */
-	static int rightSwitchDIO = 5;
+	static int rightSwitchDIO = 9;
 	/** DIO port for ultrasonic **/
 	static int ultrasonicPort = 6;
 
