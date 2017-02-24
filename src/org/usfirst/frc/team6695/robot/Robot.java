@@ -231,7 +231,10 @@ public class Robot extends IterativeRobot {
 		else beltMotor.set(0.0);
 	}
 
-	/** If stop button is clicked, stop robot functions **/
+	/** If stop button is clicked, stop robot functions
+	 * <br><b>THE DRIVE STATION HAS THIS! Just Press Space To ESTOP</b>
+	 **/
+	@Deprecated
 	public void eStop() {
 		if (Config.allowEStop) {
 			if (xbox.getRawButton(Config.eStopButton)) {
