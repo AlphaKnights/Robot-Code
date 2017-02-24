@@ -231,8 +231,15 @@ public class Robot extends IterativeRobot {
 		else beltMotor.set(0.0);
 	}
 
-	/** If stop button is clicked, stop robot functions
-	 * <br><b>THE DRIVE STATION HAS THIS! Just Press Space To ESTOP</b>
+	/**
+	 * If stop button is clicked, stop robot functions <br>
+	 * <b>THE DRIVE STATION HAS THIS! Just Press Space To ESTOP</b> <br>
+	 * Note: This will E-Stop the robot regardless of if the Driver Station
+	 * window has focus or not (THIS IS AN FRC THING)
+	 * 
+	 * @see <a href=
+	 *      "http://wpilib.screenstepslive.com/s/4485/m/24192/l/144976-frc-driver-station-powered-by-ni-labview">Drive
+	 *      Station Info</a>
 	 **/
 	@Deprecated
 	public void eStop() {
