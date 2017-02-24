@@ -134,24 +134,9 @@ public class Robot extends IterativeRobot {
 		drive();
 		shoot();
 		// ballConveyorBelt();
-		eStop();
 		getSpeeds();
 		// testUltrasonic();
 	}
-
-	// public void testUltrasonic() {
-	// ultrasonic.setEnabled(true);
-	// System.out.println(ultrasonic.getRangeInches());
-	// }
-	//
-	// /** Approxomate the ball speed when button is clicked **/
-	// public void APS() {
-	// ultrasonic.setEnabled(true);
-	// if (logitechJoy.getRawButton(Config.getAppxBallButton)) {
-	// ballThrottle = (ultrasonic.getRangeInches() * Config.speedDistanceRatio);
-	// System.out.println("Set Speed: " + ballThrottle);
-	// }
-	// }
 
 	/**
 	 * Ball Shooter Code
@@ -221,12 +206,10 @@ public class Robot extends IterativeRobot {
 	/** Ball Conveyer Belt */
 	@Deprecated
 	public void ballConveyorBelt() {
-		// check for toggle of belt button
 		boolean button = xbox.getRawButton(Config.beltButton);
 		if (button && !prevBeltButton) isBelting = !isBelting;
 		if (button) prevBeltButton = true;
 		else prevBeltButton = false;
-		// turn on and off belt motor
 		if (isBelting) beltMotor.set(Config.beltSpeed);
 		else beltMotor.set(0.0);
 	}
