@@ -1,5 +1,7 @@
 package org.usfirst.frc.team6695.robot;
 
+import org.usfirst.frc.team6695.robot.ModeSelector.Mode;
+
 import com.ctre.CANTalon;
 
 import edu.wpi.first.wpilibj.CameraServer;
@@ -90,8 +92,7 @@ public class Robot extends IterativeRobot {
 	/** This function is run once each time the robot enters autonomous mode */
 	@Override
 	public void autonomousInit() {
-		// autonomous();
-		DriveDistance(0.5, 10);
+		autonomous();
 	}
 
 	/** This function is called periodically during autonomous */
@@ -225,8 +226,9 @@ public class Robot extends IterativeRobot {
 	 *      Station Info</a>
 	 **/
 	@Deprecated
-	public void eStop() {
+	public void alphaStop() {
 		if (Config.allowEStop) {
+			System.err.println("DONT USE THIS ESTOP");
 			if (xbox.getRawButton(Config.eStopButton)) {
 				System.err.println("ESTOP");
 				drivetrain.setMaxOutput(0);
@@ -251,15 +253,73 @@ public class Robot extends IterativeRobot {
 		drivetrainEncLeft.reset();
 		while (Math.abs(drivetrainEncLeft.get()) < Math.abs(feet * Config.encUnit))
 			drivetrain.drive(speed, 0);
-		;
+	}
+
+	public void turn(int deg, double speed) {
+		drivetrainEncLeft.reset();
+		drivetrainEncRight.reset();
+		// Loop till we turn
+		drivetrain.drive(speed, 1);
+
 	}
 
 	public void autonomous() {
+		/** linear distance from starting position A / C to baseline */
+		int distToBaseline = 0;
+		/** linear distance from halfmark to baseline, used by position B */
+		int shortDistToBaseline = 0;
+		/** linear distance from baseline to halfmark, used by all positions */
+		int distToHalfmark = 0;
+		/**
+		 * linear distance from position B to halfmark, merging with C position
+		 * autonomous
+		 */
+		int diagDistToHalfmark = 0;
+		/** linear distance from halfmark to gear loader, used by all */
+		int distToLoader = 0;
+		/**
+		 * radial distance in degrees between baseline and gear loader from
+		 * halfmark
+		 */
+		int degToLoader = 0;
+
+		if (ms.getMode() == Mode.OnOff) {// A
+			System.out.println();
+			// Drive to baseline
+			DriveDistance(0.6, distToBaseline);
+			// Drive back to halfmark
+			DriveDistance(-0.6, distToHalfmark);
+			// Turn towards gear drop-off
+			turn(degToLoader, 0.6);
+			// Drive into gear loader
+			DriveDistance(0.6, distToLoader);
+		} else if (ms.getMode() == Mode.OffOn) { // C
+			// Drive to baseline
+			DriveDistance(0.6, distToBaseline);
+			// Drive back to halfmark
+			DriveDistance(-0.6, distToHalfmark);
+			// Turn towards gear drop-off
+			turn(-degToLoader, 0.6);
+			// Drive into gear loader
+			DriveDistance(0.6, distToLoader);
+		} else if (ms.getMode() == Mode.OnOn) { // B
+			// Turn towards right halfmark
+			turn(45, 0.6);
+			// Drive to right halfmark
+			DriveDistance(0.6, diagDistToHalfmark);
+			// Drive to baseline
+			DriveDistance(0.6, shortDistToBaseline);
+			// Drive back to halfmark
+			DriveDistance(-0.6, distToHalfmark);
+			// Turn towards gear drop-off
+			turn(degToLoader, 0.6);
+			// Drive into gear loader
+			DriveDistance(0.6, distToLoader);
+		}
+
 		// STAGE 1a
-		// TODO implement way to differentiate between start locations
 		// if position == A / C (far sides of start area)
 		// move in straight line until baseline crossed
-		DriveDistance(0.5, 10);
 
 		// STAGE 1b
 		// else
