@@ -66,7 +66,10 @@ public class Robot extends IterativeRobot {
 	
 	/** Autonomous Kill */
 	boolean teleOpCalled = false;
+	Timer autotime = new Timer();
 
+	Boolean climbHolding = false;
+	Boolean climbPrevHolding = false;
 	/**
 	 * Initialize instance variables from property file
 	 *
@@ -92,7 +95,6 @@ public class Robot extends IterativeRobot {
 		CameraServer.getInstance().startAutomaticCapture();
 		configSetup();
 	}
-	Timer autotime = new Timer();
 	/** This function is run once each time the robot enters autonomous mode */
 	@Override
 	public void autonomousInit() {
@@ -123,19 +125,13 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		climb();
-		drive();
 		shoot();
-		// ballConveyorBelt();
 		getSpeeds();
-		// testUltrasonic();
+		drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
 	}
 
 	/**
 	 * Ball Shooter Code
-	 * 
-	 * @param useUltrasonic
-	 *            True if ultrasonic should be used to calculate shoot speed.
-	 *            DOES NOT WORK. Keep False
 	 **/
 	public void shoot() {
 		boolean ballShoot = xbox.getRawButton(Config.ballShootButton);
@@ -162,22 +158,20 @@ public class Robot extends IterativeRobot {
 	 * Implement robot drive pressing trigger button will square inputs i.e. 0.5
 	 * speed turns to .25 (For momentary precise control)
 	 */
+	@Deprecated
 	public void drive() {
 		drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
 	}
 
 	/** Climber */
-	Boolean holding = false;
-	Boolean PrevHolding = false;
-
 	public void climb() {
 		boolean button = xbox.getRawButton(Config.ClimbHoldButton);
 
-		if (button && !PrevHolding) holding = !holding;
-		PrevHolding = button;
+		if (button && !climbPrevHolding) climbHolding = !climbHolding;
+		climbPrevHolding = button;
 		if (Config.logging) System.out.println("Motor Current: " + climbMotor.getOutputCurrent());
 
-		if (!holding) {
+		if (!climbHolding) {
 			if (Config.logging) System.out.println("Climb Motor Current:" + climbMotor.getOutputCurrent());
 
 			if ((xbox.getPOV() == Config.climbButtonSpeedUp) && (climbSpeed <= 1))
