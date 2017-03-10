@@ -63,13 +63,14 @@ public class Robot extends IterativeRobot {
 	double ballThrottle;
 	/** Get Button Info for auto */
 	ModeSelector ms = new ModeSelector(Config.leftSwitchDIO, Config.rightSwitchDIO);
-	
+
 	/** Autonomous Kill */
 	boolean teleOpCalled = false;
 	Timer autotime = new Timer();
 
 	Boolean climbHolding = false;
 	Boolean climbPrevHolding = false;
+
 	/**
 	 * Initialize instance variables from property file
 	 *
@@ -95,6 +96,7 @@ public class Robot extends IterativeRobot {
 		CameraServer.getInstance().startAutomaticCapture();
 		configSetup();
 	}
+
 	/** This function is run once each time the robot enters autonomous mode */
 	@Override
 	public void autonomousInit() {
@@ -189,67 +191,25 @@ public class Robot extends IterativeRobot {
 
 	}
 
-	/** Ball Conveyor Belt */
-	@Deprecated
-	public void ballConveyorBelt() {
-		boolean button = xbox.getRawButton(Config.beltButton);
-		if (button && !prevBeltButton) isBelting = !isBelting;
-		if (button) prevBeltButton = true;
-		else prevBeltButton = false;
-		if (isBelting) beltMotor.set(Config.beltSpeed);
-		else beltMotor.set(0.0);
-	}
-
-	/**
-	 * If stop button is clicked, stop robot functions <br>
-	 * <b>THE DRIVE STATION HAS THIS! Just Press Space To ESTOP</b> <br>
-	 * Note: This will E-Stop the robot regardless of if the Driver Station
-	 * window has focus or not (THIS IS AN FRC THING)
-	 * 
-	 * @see <a href=
-	 *      "http://wpilib.screenstepslive.com/s/4485/m/24192/l/144976-frc-driver-station-powered-by-ni-labview">Drive
-	 *      Station Info</a>
-	 **/
-	@Deprecated
-	public void alphaStop() {
-		if (Config.allowEStop) {
-			System.err.println("DONT USE THIS ESTOP");
-			if (xbox.getRawButton(Config.eStopButton)) {
-				System.err.println("ESTOP");
-				drivetrain.setMaxOutput(0);
-				ballDrive.setMaxOutput(0);
-				beltMotor.set(0);
-				beltMotor.disable();
-				climbMotor.set(0);
-				climbMotor.disable();
-			}
-			if (xbox.getRawButton(Config.eStartButton)) {
-				System.err.println("ESTART");
-				drivetrain.setMaxOutput(1);
-				ballDrive.setMaxOutput(1);
-				beltMotor.enable();
-				climbMotor.enable();
-			}
-
-		}
-	}
-
 	public void DriveDistance(double speed, double feet) {
 		drivetrainEncLeft.reset();
-		while (Math.abs(drivetrainEncLeft.get()) < Math.abs(feet * Config.encUnit) && !teleOpCalled && autotime.get() < 15) {
-			drivetrain.drive(-speed, 0); System.out.println("In Loop " + Math.abs(drivetrainEncLeft.get()) + " " + Math.abs(drivetrainEncRight.get()));
+		while (Math.abs(drivetrainEncLeft.get()) < Math.abs(feet * Config.encUnit) && !teleOpCalled
+				&& autotime.get() < 15) {
+			drivetrain.drive(-speed, 0);
+			System.out
+					.println("In Loop " + Math.abs(drivetrainEncLeft.get()) + " " + Math.abs(drivetrainEncRight.get()));
 		}
 	}
 
 	public void turn(double deg, double speed) {
 		drivetrainEncLeft.reset();
 		drivetrainEncRight.reset();
-		if (deg > 0)
-			while (Math.abs(drivetrainEncRight.get()) < Math.abs(deg * Config.degUnit) && !teleOpCalled && autotime.get() < 15)
-				drivetrain.drive(-speed, 1);
-		else if (deg < 0)
-			while (Math.abs(drivetrainEncLeft.get()) < Math.abs(deg * Config.degUnit) && !teleOpCalled && autotime.get() < 15)
-				drivetrain.drive(-speed, 1);
+		if (deg > 0) while (Math.abs(drivetrainEncRight.get()) < Math.abs(deg * Config.degUnit) && !teleOpCalled
+				&& autotime.get() < 15)
+			drivetrain.drive(-speed, 1);
+		else if (deg < 0) while (Math.abs(drivetrainEncLeft.get()) < Math.abs(deg * Config.degUnit) && !teleOpCalled
+				&& autotime.get() < 15)
+			drivetrain.drive(-speed, 1);
 
 	}
 
@@ -311,28 +271,6 @@ public class Robot extends IterativeRobot {
 			DriveDistance(0.6, distToBaseline);
 		}
 
-		// STAGE 1a
-		// if position == A / C (far sides of start area)
-		// move in straight line until baseline crossed
-
-		// STAGE 1b
-		// else
-		// turn 45 degrees
-		// move forward until intersecting the path of position A / C
-		// turn -45 degrees
-		// move in straight line until baseline crossed
-
-		// STAGE 2
-		// reverse some distance to reach airship
-		// DriveDistance(-0.6, -0.6, 3);
-
-		// turn some amount towards airship
-		// DriveDistance(-0.6, 0.6, 3);
-
-		// STAGE 3
-		// drive into airship
-		// DriveDistance(0.6, 0.6, 3);
-
 	}
 
 	public void getSpeeds() {
@@ -346,5 +284,52 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void testPeriodic() {
 		LiveWindow.run();
+	}
+
+	//Beware ye who goes beyond this point
+	
+	/** Ball Conveyor Belt */
+	@Deprecated
+	public void ballConveyorBelt() {
+		boolean button = xbox.getRawButton(Config.beltButton);
+		if (button && !prevBeltButton) isBelting = !isBelting;
+		if (button) prevBeltButton = true;
+		else prevBeltButton = false;
+		if (isBelting) beltMotor.set(Config.beltSpeed);
+		else beltMotor.set(0.0);
+	}
+
+	/**
+	 * If stop button is clicked, stop robot functions <br>
+	 * <b>THE DRIVE STATION HAS THIS! Just Press Space To ESTOP</b> <br>
+	 * Note: This will E-Stop the robot regardless of if the Driver Station
+	 * window has focus or not (THIS IS AN FRC THING)
+	 * 
+	 * @see <a href=
+	 *      "http://wpilib.screenstepslive.com/s/4485/m/24192/l/144976-frc-driver-station-powered-by-ni-labview">Drive
+	 *      Station Info</a>
+	 **/
+	@Deprecated
+	public void alphaStop() {
+		if (Config.allowEStop) {
+			System.err.println("DONT USE THIS ESTOP");
+			if (xbox.getRawButton(Config.eStopButton)) {
+				System.err.println("ESTOP");
+				drivetrain.setMaxOutput(0);
+				ballDrive.setMaxOutput(0);
+				beltMotor.set(0);
+				beltMotor.disable();
+				climbMotor.set(0);
+				climbMotor.disable();
+			}
+			if (xbox.getRawButton(Config.eStartButton)) {
+				System.err.println("ESTART");
+				drivetrain.setMaxOutput(1);
+				ballDrive.setMaxOutput(1);
+				beltMotor.enable();
+				climbMotor.enable();
+			}
+
+		}
 	}
 }
