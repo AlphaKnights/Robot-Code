@@ -67,6 +67,7 @@ public class Robot extends IterativeRobot {
 	/** Autonomous Kill */
 	boolean teleOpCalled = false;
 	Timer autotime = new Timer();
+	
 
 	Boolean climbHolding = false;
 	Boolean climbPrevHolding = false;
@@ -252,23 +253,10 @@ public class Robot extends IterativeRobot {
 			// Drive into gear loader
 			DriveDistance(0.6, distToLoader);
 		} else if (ms.getMode() == Mode.OnOn) { // B
-			System.out.println("POS B");
-			// Turn towards right halfmark
-			turn(45, 0.6);
-			// Drive to right halfmark
-			DriveDistance(0.6, diagDistToHalfmark);
-			// Drive to baseline
-			DriveDistance(0.6, distToHalfmark);
-			// Drive back to halfmark
-			DriveDistance(-0.6, distToHalfmark);
-			// Turn towards gear drop-off
-			turn(degToLoader, 0.6);
-			// Drive into gear loader
-			DriveDistance(0.6, distToLoader);
+			System.out.println("POS B NOBILITY");
+			DriveDistance(0.6, distToBaseline - distToHalfmark);
 		} else if (ms.getMode() == Mode.OffOff) {
-			System.out.println("POS A/C NOGEAR");
-			// Drive to baseline
-			DriveDistance(0.6, distToBaseline);
+			System.out.println("POS A/C NOGEAR NOBILITY");
 		}
 
 	}
