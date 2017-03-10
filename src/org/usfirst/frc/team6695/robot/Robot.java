@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
@@ -62,6 +63,9 @@ public class Robot extends IterativeRobot {
 	double ballThrottle;
 	/** Get Button Info for auto */
 	ModeSelector ms = new ModeSelector(Config.leftSwitchDIO, Config.rightSwitchDIO);
+	
+	/** Autonomous Kill */
+	boolean teleOpCalled = false;
 
 	/**
 	 * Initialize instance variables from property file
@@ -88,10 +92,12 @@ public class Robot extends IterativeRobot {
 		CameraServer.getInstance().startAutomaticCapture();
 		configSetup();
 	}
-
+	Timer autotime = new Timer();
 	/** This function is run once each time the robot enters autonomous mode */
 	@Override
 	public void autonomousInit() {
+		autotime.reset();
+		autotime.start();
 		autonomous();
 	}
 
@@ -107,6 +113,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopInit() {
 		System.out.println("Hello World");
+		teleOpCalled = true;
 		drivetrain.drive(0, 0);
 		drivetrainEncLeft.reset();
 		drivetrainEncRight.reset();
@@ -115,22 +122,6 @@ public class Robot extends IterativeRobot {
 	/** This function is called periodically during operator control */
 	@Override
 	public void teleopPeriodic() {
-		// System.out.println(drivetrainEncLeft.getDistance());
-		//
-		// System.out.println("loop");
-		//
-		// if (xbox.getAButton()) {
-		// drivetrain.drive(-.3, 0);
-		// } else {
-		// drivetrain.drive(0, 0);
-		// }
-
-		// // System.out.println(uss.getRangeInches());
-		// System.err.println(drivetrainEncLeft.getDistance());
-		// if (Config.logging) System.out.println("Total Current: " +
-		// pdp.getTotalCurrent());
-		//
-		ms.getMode();
 		climb();
 		drive();
 		shoot();
@@ -204,7 +195,7 @@ public class Robot extends IterativeRobot {
 
 	}
 
-	/** Ball Conveyer Belt */
+	/** Ball Conveyor Belt */
 	@Deprecated
 	public void ballConveyorBelt() {
 		boolean button = xbox.getRawButton(Config.beltButton);
@@ -251,40 +242,43 @@ public class Robot extends IterativeRobot {
 
 	public void DriveDistance(double speed, double feet) {
 		drivetrainEncLeft.reset();
-		while (Math.abs(drivetrainEncLeft.get()) < Math.abs(feet * Config.encUnit))
-			drivetrain.drive(speed, 0);
+		while (Math.abs(drivetrainEncLeft.get()) < Math.abs(feet * Config.encUnit) && !teleOpCalled && autotime.get() < 15) {
+			drivetrain.drive(-speed, 0); System.out.println("In Loop " + Math.abs(drivetrainEncLeft.get()) + " " + Math.abs(drivetrainEncRight.get()));
+		}
 	}
 
-	public void turn(int deg, double speed) {
+	public void turn(double deg, double speed) {
 		drivetrainEncLeft.reset();
 		drivetrainEncRight.reset();
-		// Loop till we turn
-		drivetrain.drive(speed, 1);
+		if (deg > 0)
+			while (Math.abs(drivetrainEncRight.get()) < Math.abs(deg * Config.degUnit) && !teleOpCalled && autotime.get() < 15)
+				drivetrain.drive(-speed, 1);
+		else if (deg < 0)
+			while (Math.abs(drivetrainEncLeft.get()) < Math.abs(deg * Config.degUnit) && !teleOpCalled && autotime.get() < 15)
+				drivetrain.drive(-speed, 1);
 
 	}
 
 	public void autonomous() {
 		/** linear distance from starting position A / C to baseline */
-		int distToBaseline = 0;
-		/** linear distance from halfmark to baseline, used by position B */
-		int shortDistToBaseline = 0;
+		double distToBaseline = 187.5;
 		/** linear distance from baseline to halfmark, used by all positions */
-		int distToHalfmark = 0;
+		double distToHalfmark = distToBaseline - 94.5;
 		/**
 		 * linear distance from position B to halfmark, merging with C position
 		 * autonomous
 		 */
-		int diagDistToHalfmark = 0;
+		double diagDistToHalfmark = 131;
 		/** linear distance from halfmark to gear loader, used by all */
-		int distToLoader = 0;
+		double distToLoader = 68;
 		/**
 		 * radial distance in degrees between baseline and gear loader from
 		 * halfmark
 		 */
-		int degToLoader = 0;
+		double degToLoader = 0;
 
 		if (ms.getMode() == Mode.OnOff) {// A
-			System.out.println();
+			System.out.println("POS A");
 			// Drive to baseline
 			DriveDistance(0.6, distToBaseline);
 			// Drive back to halfmark
@@ -294,6 +288,7 @@ public class Robot extends IterativeRobot {
 			// Drive into gear loader
 			DriveDistance(0.6, distToLoader);
 		} else if (ms.getMode() == Mode.OffOn) { // C
+			System.out.println("POS C");
 			// Drive to baseline
 			DriveDistance(0.6, distToBaseline);
 			// Drive back to halfmark
@@ -303,18 +298,23 @@ public class Robot extends IterativeRobot {
 			// Drive into gear loader
 			DriveDistance(0.6, distToLoader);
 		} else if (ms.getMode() == Mode.OnOn) { // B
+			System.out.println("POS B");
 			// Turn towards right halfmark
 			turn(45, 0.6);
 			// Drive to right halfmark
 			DriveDistance(0.6, diagDistToHalfmark);
 			// Drive to baseline
-			DriveDistance(0.6, shortDistToBaseline);
+			DriveDistance(0.6, distToHalfmark);
 			// Drive back to halfmark
 			DriveDistance(-0.6, distToHalfmark);
 			// Turn towards gear drop-off
 			turn(degToLoader, 0.6);
 			// Drive into gear loader
 			DriveDistance(0.6, distToLoader);
+		} else if (ms.getMode() == Mode.OffOff) {
+			System.out.println("POS A/C NOGEAR");
+			// Drive to baseline
+			DriveDistance(0.6, distToBaseline);
 		}
 
 		// STAGE 1a

@@ -47,9 +47,9 @@ public final class Config {
 
 	// INPUTS
 	/** Joystick Port */
-	static int joystick = 0;// TODO DEPENDS ON SIDE
+	static int joystick = 1;// TODO DEPENDS ON SIDE
 	/** xbox port */
-	static int xbox = 1;// TODO DEPENDS ON SIDE
+	static int xbox = 0;// TODO DEPENDS ON SIDE
 
 	// DIO PORTS
 	/** DIO Port #1 For Right Encoder */
@@ -89,7 +89,8 @@ public final class Config {
 	/** Should we allow estop? Only for testing IMO **/
 	static boolean allowEStop = true;
 	/** Drivetrain encoder unit definition (counts / meter) */
-	static double encUnit = -481.4; // TODO find foot / count conversion
+	static double encUnit = -481.4;
+	static double degUnit = 633 / 360; // TODO find encoder to degree conversion
 	/** True/False for logging */
 	static boolean logging = false;
 	static double speedDistanceRatio = .4;// TODO Find ratio
