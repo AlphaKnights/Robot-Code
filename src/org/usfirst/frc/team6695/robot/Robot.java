@@ -286,8 +286,8 @@ public class Robot extends IterativeRobot {
 		LiveWindow.run();
 	}
 
-	//Beware ye who goes beyond this point
-	
+	// Beware ye who goes beyond this point
+
 	/** Ball Conveyor Belt */
 	@Deprecated
 	public void ballConveyorBelt() {
