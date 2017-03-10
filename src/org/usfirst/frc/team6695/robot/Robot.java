@@ -118,6 +118,8 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopInit() {
 		System.out.println("Hello World");
+		drivetrainEncLeft.reset();
+		drivetrainEncRight.reset();
 		teleOpCalled = true;
 		drivetrain.drive(0, 0);
 		drivetrainEncLeft.reset();
@@ -131,6 +133,8 @@ public class Robot extends IterativeRobot {
 		shoot();
 		getSpeeds();
 		drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
+		System.out.println("In Loop " + Math.abs(drivetrainEncLeft.get()) + " " + Math.abs(drivetrainEncRight.get()));
+		
 	}
 
 	/**
@@ -194,21 +198,21 @@ public class Robot extends IterativeRobot {
 
 	public void DriveDistance(double speed, double feet) {
 		drivetrainEncLeft.reset();
-		while (Math.abs(drivetrainEncLeft.get()) < Math.abs(feet * Config.encUnit) && !teleOpCalled
+		drivetrainEncRight.reset();
+		while (Math.abs(drivetrainEncLeft.get()) < Math.abs(feet * Config.encUnit) && Math.abs(drivetrainEncRight.get()) < Math.abs(feet * Config.encUnit) && !teleOpCalled
 				&& autotime.get() < 15) {
 			drivetrain.drive(-speed, 0);
-			System.out
-					.println("In Loop " + Math.abs(drivetrainEncLeft.get()) + " " + Math.abs(drivetrainEncRight.get()));
+			System.out.println("In Loop " + Math.abs(drivetrainEncLeft.get()) + " " + Math.abs(drivetrainEncRight.get()));
 		}
 	}
 
 	public void turn(double deg, double speed) {
 		drivetrainEncLeft.reset();
 		drivetrainEncRight.reset();
-		if (deg > 0) while (Math.abs(drivetrainEncRight.get()) < Math.abs(deg * Config.degUnit) && !teleOpCalled
+		if (deg > 0) while (Math.abs(drivetrainEncRight.get()) < Math.abs(deg * Config.degUnit) && Math.abs(drivetrainEncLeft.get()) < Math.abs(deg * Config.degUnit) && !teleOpCalled
 				&& autotime.get() < 15)
 			drivetrain.drive(-speed, 1);
-		else if (deg < 0) while (Math.abs(drivetrainEncLeft.get()) < Math.abs(deg * Config.degUnit) && !teleOpCalled
+		else if (deg < 0) while (Math.abs(drivetrainEncLeft.get()) < Math.abs(deg * Config.degUnit) && Math.abs(drivetrainEncRight.get()) < Math.abs(deg * Config.degUnit) && !teleOpCalled
 				&& autotime.get() < 15)
 			drivetrain.drive(-speed, 1);
 
@@ -216,21 +220,21 @@ public class Robot extends IterativeRobot {
 
 	public void autonomous() {
 		/** linear distance from starting position A / C to baseline */
-		double distToBaseline = 187.5;
+		double distToBaseline = 187.5 / 12;
 		/** linear distance from baseline to halfmark, used by all positions */
-		double distToHalfmark = distToBaseline - 94.5;
+		double distToHalfmark = (distToBaseline - 94.5 / 12) / 12;
 		/**
 		 * linear distance from position B to halfmark, merging with C position
 		 * autonomous
 		 */
-		double diagDistToHalfmark = 131;
+		double diagDistToHalfmark = 131 / 12;
 		/** linear distance from halfmark to gear loader, used by all */
-		double distToLoader = 68;
+		double distToLoader = 68 / 12;
 		/**
 		 * radial distance in degrees between baseline and gear loader from
 		 * halfmark
 		 */
-		double degToLoader = 0;
+		double degToLoader = 60;
 
 		if (ms.getMode() == Mode.OnOff) {// A
 			System.out.println("POS A");
@@ -253,12 +257,11 @@ public class Robot extends IterativeRobot {
 			// Drive into gear loader
 			DriveDistance(0.6, distToLoader);
 		} else if (ms.getMode() == Mode.OnOn) { // B
-			System.out.println("POS B NOBILITY");
+			System.out.println("POS B NOMOBILITY");
 			DriveDistance(0.6, distToBaseline - distToHalfmark);
 		} else if (ms.getMode() == Mode.OffOff) {
-			System.out.println("POS A/C NOGEAR NOBILITY");
+			System.out.println("POS A/B/C NOGEAR NOMOBILITY");
 		}
-
 	}
 
 	public void getSpeeds() {
