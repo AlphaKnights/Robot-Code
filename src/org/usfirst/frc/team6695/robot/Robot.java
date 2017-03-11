@@ -67,7 +67,8 @@ public class Robot extends IterativeRobot {
 	/** Autonomous Kill */
 	boolean teleOpCalled = false;
 	Timer autotime = new Timer();
-	
+
+	Timer brakeTimer = new Timer();
 
 	Boolean climbHolding = false;
 	Boolean climbPrevHolding = false;
@@ -95,6 +96,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		CameraServer.getInstance().startAutomaticCapture();
+
 		configSetup();
 	}
 
@@ -134,7 +136,7 @@ public class Robot extends IterativeRobot {
 		getSpeeds();
 		drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
 		System.out.println("In Loop " + Math.abs(drivetrainEncLeft.get()) + " " + Math.abs(drivetrainEncRight.get()));
-		
+
 	}
 
 	/**
@@ -173,6 +175,9 @@ public class Robot extends IterativeRobot {
 	/** Climber */
 	public void climb() {
 		boolean button = xbox.getRawButton(Config.ClimbHoldButton);
+		if (xbox.getAButton()) {
+			climbSpeed = 0;
+		}
 
 		if (button && !climbPrevHolding) climbHolding = !climbHolding;
 		climbPrevHolding = button;
@@ -195,27 +200,46 @@ public class Robot extends IterativeRobot {
 		}
 
 	}
+	
+	Timer drivetrainTimer = new Timer();
 
-	public void DriveDistance(double speed, double feet) {
+	public void DriveDistance(double speed, double seconds) {
+		/*
 		drivetrainEncLeft.reset();
 		drivetrainEncRight.reset();
-		while (Math.abs(drivetrainEncLeft.get()) < Math.abs(feet * Config.encUnit) && Math.abs(drivetrainEncRight.get()) < Math.abs(feet * Config.encUnit) && !teleOpCalled
+		while (Math.abs(drivetrainEncLeft.get()) < Math.abs(feet * Config.encUnit)
+				&& Math.abs(drivetrainEncRight.get()) < Math.abs(feet * Config.encUnit) && !teleOpCalled
 				&& autotime.get() < 15) {
 			drivetrain.drive(-speed, 0);
 			System.out.println("In Loop " + Math.abs(drivetrainEncLeft.get()) + " " + Math.abs(drivetrainEncRight.get()));
 		}
+		*/
+		
+		drivetrainTimer.start();
+		while (drivetrainTimer.get() < seconds && !teleOpCalled && autotime.get() < 15)
+			drivetrain.drive(-speed, 0);
+		
+		brake(1);
 	}
 
+	@Deprecated
 	public void turn(double deg, double speed) {
 		drivetrainEncLeft.reset();
 		drivetrainEncRight.reset();
-		if (deg > 0) while (Math.abs(drivetrainEncRight.get()) < Math.abs(deg * Config.degUnit) && Math.abs(drivetrainEncLeft.get()) < Math.abs(deg * Config.degUnit) && !teleOpCalled
+		while (Math.abs(drivetrainEncRight.get()) < Math.abs(deg * Config.degUnit)
+				&& Math.abs(drivetrainEncLeft.get()) < Math.abs(deg * Config.degUnit) && !teleOpCalled
 				&& autotime.get() < 15)
-			drivetrain.drive(-speed, 1);
-		else if (deg < 0) while (Math.abs(drivetrainEncLeft.get()) < Math.abs(deg * Config.degUnit) && Math.abs(drivetrainEncRight.get()) < Math.abs(deg * Config.degUnit) && !teleOpCalled
-				&& autotime.get() < 15)
-			drivetrain.drive(-speed, 1);
+			drivetrain.drive(-speed, -1);
+		brake(1);
+	}
 
+	public void brake(double seconds) {
+		brakeTimer.reset();
+		brakeTimer.start();
+		while (brakeTimer.get() < seconds && !teleOpCalled && autotime.get() < 15) {
+			System.out.print("");
+		}
+		brakeTimer.reset();
 	}
 
 	public void autonomous() {
@@ -237,38 +261,38 @@ public class Robot extends IterativeRobot {
 		double degToLoader = 60;
 
 		if (ms.getMode() == Mode.OnOff) {// A
-			System.out.println("POS A");
+			System.out.println("POS A NOGEAR");
 			// Drive to baseline
-			DriveDistance(0.6, distToBaseline);
-			// Drive back to halfmark
-			DriveDistance(-0.6, distToHalfmark);
-			// Turn towards gear drop-off
-			turn(degToLoader, 0.6);
-			// Drive into gear loader
-			DriveDistance(0.6, distToLoader);
+			DriveDistance(0.6, 2.5);
+//			// Drive back to halfmark
+//			DriveDistance(-0.6, distToHalfmark);
+//			// Turn towards gear drop-off
+//			turn(degToLoader, 0.6);
+//			// Drive into gear loader
+//			DriveDistance(0.6, distToLoader - 1);
+//			DriveDistance(0.5, 1);
 		} else if (ms.getMode() == Mode.OffOn) { // C
-			System.out.println("POS C");
+			System.out.println("POS C NOGEAR");
 			// Drive to baseline
-			DriveDistance(0.6, distToBaseline);
-			// Drive back to halfmark
-			DriveDistance(-0.6, distToHalfmark);
-			// Turn towards gear drop-off
-			turn(-degToLoader, 0.6);
-			// Drive into gear loader
-			DriveDistance(0.6, distToLoader);
+			DriveDistance(0.6, 2.5);
+//			// Drive back to halfmark
+//			DriveDistance(-0.6, distToHalfmark);
+//			// Turn towards gear drop-off
+//			turn(-degToLoader, 0.6);
+//			// Drive into gear loader
+//			DriveDistance(0.6, distToLoader - 1);
+//			DriveDistance(0.5, 1);
 		} else if (ms.getMode() == Mode.OnOn) { // B
 			System.out.println("POS B NOMOBILITY");
-			DriveDistance(0.6, distToBaseline - distToHalfmark);
+			DriveDistance(0.6, 1);
 		} else if (ms.getMode() == Mode.OffOff) {
 			System.out.println("POS A/B/C NOGEAR NOMOBILITY");
 		}
 	}
 
 	public void getSpeeds() {
-		if (xbox.getRawButton(Config.getSpeed)) {
-			System.out.println("Climb Speed: " + climbSpeed);
-			System.out.println("Ball Speed: " + ballThrottle);
-		}
+		System.out.println("Climb Speed: " + climbSpeed);
+		System.out.println("Ball Speed: " + ballThrottle);
 	}
 
 	/** This function is called periodically during test mode */

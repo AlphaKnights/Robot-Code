@@ -22,7 +22,7 @@ public final class Config {
 	/** Ball Stir Motor */
 	static int ballStirMotor = 4;
 
-	/** Button to button */
+	/** Button to hold... */
 	static int ClimbHoldButton = XboxButtonID.Back.value();
 	/** Button To press to speedup climb motor */
 	static int climbButtonSpeedUp = XboxPOVID.UP.value();
@@ -71,7 +71,7 @@ public final class Config {
 	/** How much to increment climb speed */
 	static double climbInc = 0.05;
 	/** Start speed of ball launcher */
-	static double baseBallThrottle = 0.5;
+	static double baseBallThrottle = 0.6;
 	/** How much to change ball speed by per click */
 	static double deltaBallThrottle = 0.01;
 
@@ -89,7 +89,7 @@ public final class Config {
 	/** Should we allow estop? Only for testing IMO **/
 	static boolean allowEStop = true;
 	/** Drivetrain encoder unit definition (counts / meter) */
-	static double encUnit = 565 / 15;
+	static double encUnit = 565 / 15 * 2;
 	static double degUnit = 633 / 360; // TODO find encoder to degree conversion
 	/** True/False for logging */
 	static boolean logging = false;
