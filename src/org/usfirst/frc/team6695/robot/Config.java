@@ -47,9 +47,9 @@ public final class Config {
 
 	// INPUTS
 	/** Joystick Port */
-	static int joystick = 1;// TODO DEPENDS ON SIDE
+	static int joystick = 0;// TODO DEPENDS ON SIDE
 	/** xbox port */
-	static int xbox = 0;// TODO DEPENDS ON SIDE
+	static int xbox = 1;// TODO DEPENDS ON SIDE
 
 	// DIO PORTS
 	/** DIO Port #1 For Right Encoder */
@@ -71,7 +71,7 @@ public final class Config {
 	/** How much to increment climb speed */
 	static double climbInc = 0.05;
 	/** Start speed of ball launcher */
-	static double baseBallThrottle = 0.6;
+	static double baseBallThrottle = 0.5;
 	/** How much to change ball speed by per click */
 	static double deltaBallThrottle = 0.01;
 
