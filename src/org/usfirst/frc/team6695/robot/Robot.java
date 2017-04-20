@@ -107,7 +107,8 @@ public class Robot extends IterativeRobot {
 	public void autonomousInit() {
 		autotime.reset();
 		autotime.start();
-		autonomous();
+		//autonomous();
+		
 	}
 
 	/** This function is called periodically during autonomous */
@@ -135,10 +136,7 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		climb();
 		shoot();
-		getSpeeds();
 		drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
-		System.out.println("In Loop " + Math.abs(drivetrainEncLeft.get()) + " " + Math.abs(drivetrainEncRight.get()));
-
 	}
 
 	/**
@@ -244,6 +242,7 @@ public class Robot extends IterativeRobot {
 		brakeTimer.reset();
 	}
 
+	@Deprecated
 	public void autonomous() {
 		/** linear distance from starting position A / C to baseline */
 		double distToBaseline = 187.5 / 12;
@@ -300,6 +299,10 @@ public class Robot extends IterativeRobot {
 	/** This function is called periodically during test mode */
 	@Override
 	public void testPeriodic() {
+		if (autotime.get() != 0) {
+			System.out.println((int)(autotime.get() * 1000) + "," + drivetrain.getLeft() + "," + drivetrain.getRight());
+		} else autotime.start();
+		drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
 		LiveWindow.run();
 	}
 
