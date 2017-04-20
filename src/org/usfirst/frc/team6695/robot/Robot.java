@@ -22,8 +22,6 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  * creating this project, you must also update the manifest file in the resource
  * directory.
  */
-
-//DO NOT CHANGE THIS BRANCH.... IT IS A SAVE POINT FOR ME......
 public class Robot extends IterativeRobot {
 	/** Talon SRX motor controller for climbing rope */
 	CANTalon climbMotor;
