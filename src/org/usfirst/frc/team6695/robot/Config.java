@@ -42,14 +42,13 @@ public final class Config {
 	static int eStartButton = XboxButtonID.A.value();
 	/** Button To get Speed */
 	static int getSpeed = XboxButtonID.B.value();
-
 	static int getAppxBallButton = 1;
 
 	// INPUTS
 	/** Joystick Port */
-	static int joystick = 0;// TODO DEPENDS ON SIDE
+	static int joystick = 1;// TODO DEPENDS ON SIDE
 	/** xbox port */
-	static int xbox = 1;// TODO DEPENDS ON SIDE
+	static int xbox = 0;// TODO DEPENDS ON SIDE
 
 	// DIO PORTS
 	/** DIO Port #1 For Right Encoder */

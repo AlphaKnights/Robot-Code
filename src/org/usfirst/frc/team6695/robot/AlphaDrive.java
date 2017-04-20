@@ -96,5 +96,8 @@ public class AlphaDrive extends RobotDrive {
 		throttle = 1 - throttle;
 		setLeftRightMotorOutputs(rightMotorSpeed * throttle, leftMotorSpeed * throttle);
 	}
+	
+	public double getLeft()  { return m_rearLeftMotor.get(); }
+	public double getRight() { return m_rearRightMotor.get(); }
 
 }
