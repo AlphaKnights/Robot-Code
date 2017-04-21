@@ -5,6 +5,7 @@ public class DrivingData {
 		if (t == DrivingDataType.TroyMiddle) {
 			for (int i = 0; i < this.troyMiddleDriving.length; i++) {
 				this.troyMiddleDriving[i][0] -= 167591;
+				this.troyMiddleDriving[i][2] = -this.troyMiddleDriving[i][2];
 			}
 			java.util.Arrays.sort(this.troyMiddleDriving, new java.util.Comparator<double[]>() {
 			    public int compare(double[] d1, double[] d2) {

@@ -99,11 +99,12 @@ public class Robot extends IterativeRobot {
 		configSetup();
 	}
 	
-	boolean autonomousActive = true;
+	boolean autonomousActive;
 
 	/** This function is run once each time the robot enters autonomous mode */
 	@Override
 	public void autonomousInit() {
+		autonomousActive = true;
 		DrivingData driveData = null;
 		DrivingDataType dataType = null;
 		switch (ms.getMode()) {
@@ -118,14 +119,17 @@ public class Robot extends IterativeRobot {
 		int timeIndex = 0;
 		autotime.reset();
 		autotime.start();
+		if (dataType == DrivingDataType.TroyMiddle) {
 		while(autonomousActive) {
-			if (autotime.get() >= driveData.driveDataArray[timeIndex][0]) {
+			if (autotime.get() * 1000 >= driveData.driveDataArray[timeIndex][0]) {
 				drivetrain.setLeftRightMotorOutputs(driveData.driveDataArray[timeIndex][1], driveData.driveDataArray[timeIndex][2]);
+				System.out.println("motor set at " + autotime.get() * 1000);
 				timeIndex++;
-				if (timeIndex > driveData.driveDataArray.length) autonomousActive = false;
+				if (timeIndex == driveData.driveDataArray.length) autonomousActive = false;
 			}
 			if (autotime.get() >= 15.0) autonomousActive = false;
 		}
+		} else autonomous();
 	}
 
 	/** This function is called periodically during autonomous */
@@ -258,7 +262,6 @@ public class Robot extends IterativeRobot {
 		brakeTimer.reset();
 	}
 
-	@Deprecated
 	public void autonomous() {
 		/** linear distance from starting position A / C to baseline */
 		double distToBaseline = 187.5 / 12;
