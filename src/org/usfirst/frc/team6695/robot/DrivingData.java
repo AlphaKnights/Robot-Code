@@ -1,18 +1,21 @@
 package org.usfirst.frc.team6695.robot;
-import java.util.Arrays;
 public class DrivingData {
-	public DrivingData() {
-		for (int i = 0; i < troysDriving.length; i++) {
-			troysDriving[i][0] -= 167591;
+	public double[][] driveDataArray;
+	public DrivingData(DrivingDataType t) {
+		if (t == DrivingDataType.TroyMiddle) {
+			for (int i = 0; i < this.troyMiddleDriving.length; i++) {
+				this.troyMiddleDriving[i][0] -= 167591;
+			}
+			java.util.Arrays.sort(this.troyMiddleDriving, new java.util.Comparator<double[]>() {
+			    public int compare(double[] d1, double[] d2) {
+			        return Double.compare(d1[0], d2[0]);
+			    }
+			});
+			driveDataArray = this.troyMiddleDriving;
 		}
-		Arrays.sort(troysDriving, new java.util.Comparator<double[]>() {
-		    public int compare(double[] d1, double[] d2) {
-		        return Double.compare(d1[0], d2[0]);
-		    }
-		});
 	}
 	
-	public double[][] troysDriving = {
+	public double[][] troyMiddleDriving = {
 			  { 167623,0.0,0.0 },
 			  { 167603,0.0,0.0 },
 			  { 167591,0.0,0.0 },

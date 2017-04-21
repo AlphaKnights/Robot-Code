@@ -96,23 +96,41 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		CameraServer.getInstance().startAutomaticCapture();
-
 		configSetup();
 	}
+	
+	boolean autonomousActive = true;
 
 	/** This function is run once each time the robot enters autonomous mode */
 	@Override
 	public void autonomousInit() {
+		DrivingData driveData = null;
+		DrivingDataType dataType = null;
+		switch (ms.getMode()) {
+		case OnOff: dataType = DrivingDataType.TroyLeft; break;
+		case OnOn: dataType = DrivingDataType.TroyMiddle; break;
+		case OffOn: dataType = DrivingDataType.TroyRight; break;
+		case OffOff:
+		case none:
+		default: dataType = DrivingDataType.Disabled; break;
+		}
+		driveData = new DrivingData(dataType);
+		int timeIndex = 0;
 		autotime.reset();
 		autotime.start();
-		//autonomous();
-		
+		while(autonomousActive) {
+			if (autotime.get() >= driveData.driveDataArray[timeIndex][0]) {
+				drivetrain.setLeftRightMotorOutputs(driveData.driveDataArray[timeIndex][1], driveData.driveDataArray[timeIndex][2]);
+				timeIndex++;
+				if (timeIndex > driveData.driveDataArray.length) autonomousActive = false;
+			}
+			if (autotime.get() >= 15.0) autonomousActive = false;
+		}
 	}
 
 	/** This function is called periodically during autonomous */
 	@Override
-	public void autonomousPeriodic() {
-	}
+	public void autonomousPeriodic() {}
 
 	/**
 	 * This function is called once each time the robot enters tele-operated
@@ -120,7 +138,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopInit() {
-		System.out.println("Hello World");
+		autonomousActive = false;
 		drivetrainEncLeft.reset();
 		drivetrainEncRight.reset();
 		teleOpCalled = true;

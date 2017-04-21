@@ -42,6 +42,7 @@ public final class Config {
 	static int eStartButton = XboxButtonID.A.value();
 	/** Button To get Speed */
 	static int getSpeed = XboxButtonID.B.value();
+
 	static int getAppxBallButton = 1;
 
 	// INPUTS
@@ -80,7 +81,7 @@ public final class Config {
 	/** Speed To go when holding */
 	static double holdSpeed = 0.0; // TODO FIND SPEED
 
-	// Maxumums
+	// Maximums
 	/** Max Current of climb motor */
 	static double climbMaxCurrent = 100000.0; // TODO FIND MAX CURRENT
 
