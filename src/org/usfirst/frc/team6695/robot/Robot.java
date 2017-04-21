@@ -99,12 +99,11 @@ public class Robot extends IterativeRobot {
 		configSetup();
 	}
 	
-	boolean autonomousActive;
+	boolean autonomousActive = true;
 
 	/** This function is run once each time the robot enters autonomous mode */
 	@Override
 	public void autonomousInit() {
-		autonomousActive = true;
 		DrivingData driveData = null;
 		DrivingDataType dataType = null;
 		switch (ms.getMode()) {
@@ -120,15 +119,15 @@ public class Robot extends IterativeRobot {
 		autotime.reset();
 		autotime.start();
 		if (dataType == DrivingDataType.TroyMiddle) {
-		while(autonomousActive) {
-			if (autotime.get() * 1000 >= driveData.driveDataArray[timeIndex][0]) {
-				drivetrain.setLeftRightMotorOutputs(driveData.driveDataArray[timeIndex][1], driveData.driveDataArray[timeIndex][2]);
-				System.out.println("motor set at " + autotime.get() * 1000);
-				timeIndex++;
-				if (timeIndex == driveData.driveDataArray.length) autonomousActive = false;
+			while(autonomousActive) {
+				if (autotime.get() * 1000 >= driveData.driveDataArray[timeIndex][0]) {
+					drivetrain.setLeftRightMotorOutputs(driveData.driveDataArray[timeIndex][1], driveData.driveDataArray[timeIndex][2]);
+					System.out.println("motor set at " + autotime.get() * 1000);
+					System.out.println(timeIndex++);
+					if (timeIndex == driveData.driveDataArray.length) autonomousActive = false;
+				}
+				if (autotime.get() >= 15.0) autonomousActive = false;
 			}
-			if (autotime.get() >= 15.0) autonomousActive = false;
-		}
 		} else autonomous();
 	}
 
