@@ -6,6 +6,7 @@ import com.ctre.CANTalon;
 
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
@@ -28,7 +29,8 @@ public class Robot extends IterativeRobot {
 	/** Talon SRX motor controller for ball belt */
 	CANTalon beltMotor;
 	/** Drive configuration for robot drivetrain */
-	AlphaDrive drivetrain;
+//	AlphaDrive drivetrain;
+	RobotDrive drivetrain;
 	int avgCount;
 	double avgLinearDistance;
 	double avgSpeed;
@@ -80,13 +82,15 @@ public class Robot extends IterativeRobot {
 	 */
 	public void configSetup() {
 		System.out.println("Starting UP");
-		logitechJoy = new Joystick(Config.joystick);
-		xbox = new XboxController(Config.xbox);
-		ballThrottle = Config.baseBallThrottle;
-		drivetrain = new AlphaDrive(Config.driveMotorLeftChannel, Config.driveMotorRightChannel);
-		ballDrive = new RobotDrive(new CANTalon(Config.ballMotor1), new CANTalon(Config.ballMotor2));
-		climbMotor = new CANTalon(Config.climbMotor);
-		beltMotor = new CANTalon(Config.ballStirMotor);
+		logitechJoy = new Joystick(0);
+		xbox = new XboxController(1);
+//		ballThrottle = Config.baseBallThrottle;
+		//drivetrain = new AlphaDrive(Config.driveMotorLeftChannel, Config.driveMotorRightChannel);
+		drivetrain = new RobotDrive(new CANTalon(4), new CANTalon(2), new CANTalon(1), new CANTalon(3)); //new RobotDrive(4, 2, 1, 3);
+		//drivetrain.
+		ballDrive = new RobotDrive(new CANTalon(7), new CANTalon(5));
+		climbMotor = new CANTalon(6);
+//		beltMotor = new CANTalon(Config.ballStirMotor);
 	}
 
 	/**
@@ -100,35 +104,45 @@ public class Robot extends IterativeRobot {
 	}
 	
 	boolean autonomousActive = true;
+	public final boolean rubeGoldberg = false;
 
 	/** This function is run once each time the robot enters autonomous mode */
 	@Override
 	public void autonomousInit() {
-		DrivingData driveData = null;
-		DrivingDataType dataType = null;
-		switch (ms.getMode()) {
-		case OnOff: dataType = DrivingDataType.TroyLeft; break;
-		case OnOn: dataType = DrivingDataType.TroyMiddle; break;
-		case OffOn: dataType = DrivingDataType.TroyRight; break;
-		case OffOff:
-		case none:
-		default: dataType = DrivingDataType.Disabled; break;
-		}
-		driveData = new DrivingData(dataType);
-		int timeIndex = 0;
-		autotime.reset();
-		autotime.start();
-		if (dataType == DrivingDataType.TroyMiddle) {
-			while(autonomousActive) {
-				if (autotime.get() * 1000 >= driveData.driveDataArray[timeIndex][0]) {
-					drivetrain.setLeftRightMotorOutputs(driveData.driveDataArray[timeIndex][1], driveData.driveDataArray[timeIndex][2]);
-					System.out.println("motor set at " + autotime.get() * 1000);
-					System.out.println(timeIndex++);
-					if (timeIndex == driveData.driveDataArray.length) autonomousActive = false;
-				}
-				if (autotime.get() >= 15.0) autonomousActive = false;
+		if (rubeGoldberg) {
+			autotime.reset();
+			autotime.start();
+			while (autotime.get() < 0.5) {
+				drivetrain.setLeftRightMotorOutputs(0.3, 0.3);
 			}
-		} else autonomous();
+			drivetrain.setLeftRightMotorOutputs(0, 0);
+		} else {
+			DrivingData driveData = null;
+			DrivingDataType dataType = null;
+			switch (ms.getMode()) {
+			case OnOff: dataType = DrivingDataType.TroyLeft; break;
+			case OnOn: dataType = DrivingDataType.TroyMiddle; break;
+			case OffOn: dataType = DrivingDataType.TroyRight; break;
+			case OffOff:
+			case none:
+			default: dataType = DrivingDataType.Disabled; break;
+			}
+			driveData = new DrivingData(dataType);
+			int timeIndex = 0;
+			autotime.reset();
+			autotime.start();
+			if (dataType == DrivingDataType.TroyMiddle) {
+				while(autonomousActive) {
+					if (autotime.get() * 1000 >= driveData.driveDataArray[timeIndex][0]) {
+						drivetrain.setLeftRightMotorOutputs(driveData.driveDataArray[timeIndex][1], driveData.driveDataArray[timeIndex][2]);
+						System.out.println("motor set at " + autotime.get() * 1000);
+						System.out.println(timeIndex++);
+						if (timeIndex == driveData.driveDataArray.length) autonomousActive = false;
+					}
+					if (autotime.get() >= 15.0) autonomousActive = false;
+				}
+			} else autonomous();
+		}
 	}
 
 	/** This function is called periodically during autonomous */
@@ -155,7 +169,9 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		climb();
 		shoot();
-		drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
+		//drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
+		drivetrain.arcadeDrive(logitechJoy);
+		
 	}
 
 	/**
@@ -188,7 +204,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Deprecated
 	public void drive() {
-		drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
+	//	drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
 	}
 
 	/** Climber */
@@ -318,9 +334,9 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void testPeriodic() {
 		if (autotime.get() != 0) {
-			System.out.println((int)(autotime.get() * 1000) + "," + drivetrain.getLeft() + "," + drivetrain.getRight());
+	//		System.out.println((int)(autotime.get() * 1000) + "," + drivetrain.getLeft() + "," + drivetrain.getRight());
 		} else autotime.start();
-		drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
+	//	drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
 		LiveWindow.run();
 	}
 

@@ -14,13 +14,13 @@ public final class Config {
 	/** Right Side PWM port */
 	static int driveMotorRightChannel = 1;
 	/** Ball shooter motor 1 */
-	static int ballMotor1 = 2;
+	static int ballMotor1 = -1;
 	/** Ball Shooter motor 2 */
-	static int ballMotor2 = 3;
+	static int ballMotor2 = -1;
 	/** Climb Motor */
-	static int climbMotor = 1;
+	static int climbMotor = -1;
 	/** Ball Stir Motor */
-	static int ballStirMotor = 4;
+	static int ballStirMotor = -1;
 
 	/** Button to hold... */
 	static int ClimbHoldButton = XboxButtonID.Back.value();
@@ -47,9 +47,9 @@ public final class Config {
 
 	// INPUTS
 	/** Joystick Port */
-	static int joystick = 1;// TODO DEPENDS ON SIDE
+	static int joystick = 0;// TODO DEPENDS ON SIDE
 	/** xbox port */
-	static int xbox = 0;// TODO DEPENDS ON SIDE
+	static int xbox = 1;// TODO DEPENDS ON SIDE
 
 	// DIO PORTS
 	/** DIO Port #1 For Right Encoder */
