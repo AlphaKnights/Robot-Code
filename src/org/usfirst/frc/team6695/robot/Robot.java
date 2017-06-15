@@ -6,6 +6,7 @@ import com.ctre.CANTalon;
 
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
@@ -22,15 +23,14 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  * creating this project, you must also update the manifest file in the resource
  * directory.
  */
-
-//DO NOT CHANGE THIS BRANCH.... IT IS A SAVE POINT FOR ME......
 public class Robot extends IterativeRobot {
 	/** Talon SRX motor controller for climbing rope */
 	CANTalon climbMotor;
 	/** Talon SRX motor controller for ball belt */
 	CANTalon beltMotor;
 	/** Drive configuration for robot drivetrain */
-	AlphaDrive drivetrain;
+//	AlphaDrive drivetrain;
+	RobotDrive drivetrain;
 	int avgCount;
 	double avgLinearDistance;
 	double avgSpeed;
@@ -82,13 +82,15 @@ public class Robot extends IterativeRobot {
 	 */
 	public void configSetup() {
 		System.out.println("Starting UP");
-		logitechJoy = new Joystick(Config.joystick);
-		xbox = new XboxController(Config.xbox);
-		ballThrottle = Config.baseBallThrottle;
-		drivetrain = new AlphaDrive(Config.driveMotorLeftChannel, Config.driveMotorRightChannel);
-		ballDrive = new RobotDrive(new CANTalon(Config.ballMotor1), new CANTalon(Config.ballMotor2));
-		climbMotor = new CANTalon(Config.climbMotor);
-		beltMotor = new CANTalon(Config.ballStirMotor);
+		logitechJoy = new Joystick(0);
+		xbox = new XboxController(1);
+//		ballThrottle = Config.baseBallThrottle;
+		//drivetrain = new AlphaDrive(Config.driveMotorLeftChannel, Config.driveMotorRightChannel);
+		drivetrain = new RobotDrive(new CANTalon(4), new CANTalon(2), new CANTalon(1), new CANTalon(3)); //new RobotDrive(4, 2, 1, 3);
+		//drivetrain.
+		ballDrive = new RobotDrive(new CANTalon(7), new CANTalon(5));
+		climbMotor = new CANTalon(6);
+//		beltMotor = new CANTalon(Config.ballStirMotor);
 	}
 
 	/**
@@ -98,22 +100,54 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		CameraServer.getInstance().startAutomaticCapture();
-
 		configSetup();
 	}
+	
+	boolean autonomousActive = true;
+	public final boolean rubeGoldberg = false;
 
 	/** This function is run once each time the robot enters autonomous mode */
 	@Override
 	public void autonomousInit() {
-		autotime.reset();
-		autotime.start();
-		autonomous();
+		if (rubeGoldberg) {
+			autotime.reset();
+			autotime.start();
+			while (autotime.get() < 0.5) {
+				drivetrain.setLeftRightMotorOutputs(0.3, 0.3);
+			}
+			drivetrain.setLeftRightMotorOutputs(0, 0);
+		} else {
+			DrivingData driveData = null;
+			DrivingDataType dataType = null;
+			switch (ms.getMode()) {
+			case OnOff: dataType = DrivingDataType.TroyLeft; break;
+			case OnOn: dataType = DrivingDataType.TroyMiddle; break;
+			case OffOn: dataType = DrivingDataType.TroyRight; break;
+			case OffOff:
+			case none:
+			default: dataType = DrivingDataType.Disabled; break;
+			}
+			driveData = new DrivingData(dataType);
+			int timeIndex = 0;
+			autotime.reset();
+			autotime.start();
+			if (dataType == DrivingDataType.TroyMiddle) {
+				while(autonomousActive) {
+					if (autotime.get() * 1000 >= driveData.driveDataArray[timeIndex][0]) {
+						drivetrain.setLeftRightMotorOutputs(driveData.driveDataArray[timeIndex][1], driveData.driveDataArray[timeIndex][2]);
+						System.out.println("motor set at " + autotime.get() * 1000);
+						System.out.println(timeIndex++);
+						if (timeIndex == driveData.driveDataArray.length) autonomousActive = false;
+					}
+					if (autotime.get() >= 15.0) autonomousActive = false;
+				}
+			} else autonomous();
+		}
 	}
 
 	/** This function is called periodically during autonomous */
 	@Override
-	public void autonomousPeriodic() {
-	}
+	public void autonomousPeriodic() {}
 
 	/**
 	 * This function is called once each time the robot enters tele-operated
@@ -121,7 +155,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopInit() {
-		System.out.println("Hello World");
+		autonomousActive = false;
 		drivetrainEncLeft.reset();
 		drivetrainEncRight.reset();
 		teleOpCalled = true;
@@ -135,10 +169,9 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		climb();
 		shoot();
-		getSpeeds();
-		drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
-		System.out.println("In Loop " + Math.abs(drivetrainEncLeft.get()) + " " + Math.abs(drivetrainEncRight.get()));
-
+		//drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
+		drivetrain.arcadeDrive(logitechJoy);
+		
 	}
 
 	/**
@@ -171,7 +204,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Deprecated
 	public void drive() {
-		drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
+	//	drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
 	}
 
 	/** Climber */
@@ -300,6 +333,10 @@ public class Robot extends IterativeRobot {
 	/** This function is called periodically during test mode */
 	@Override
 	public void testPeriodic() {
+		if (autotime.get() != 0) {
+	//		System.out.println((int)(autotime.get() * 1000) + "," + drivetrain.getLeft() + "," + drivetrain.getRight());
+		} else autotime.start();
+	//	drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
 		LiveWindow.run();
 	}
 

@@ -14,13 +14,13 @@ public final class Config {
 	/** Right Side PWM port */
 	static int driveMotorRightChannel = 1;
 	/** Ball shooter motor 1 */
-	static int ballMotor1 = 2;
+	static int ballMotor1 = -1;
 	/** Ball Shooter motor 2 */
-	static int ballMotor2 = 3;
+	static int ballMotor2 = -1;
 	/** Climb Motor */
-	static int climbMotor = 1;
+	static int climbMotor = -1;
 	/** Ball Stir Motor */
-	static int ballStirMotor = 4;
+	static int ballStirMotor = -1;
 
 	/** Button to hold... */
 	static int ClimbHoldButton = XboxButtonID.Back.value();
@@ -81,7 +81,7 @@ public final class Config {
 	/** Speed To go when holding */
 	static double holdSpeed = 0.0; // TODO FIND SPEED
 
-	// Maxumums
+	// Maximums
 	/** Max Current of climb motor */
 	static double climbMaxCurrent = 100000.0; // TODO FIND MAX CURRENT
 

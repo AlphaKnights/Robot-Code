@@ -2,6 +2,7 @@ package org.usfirst.frc.team6695.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.hal.HAL;
 import edu.wpi.first.wpilibj.hal.FRCNetComm.tInstances;
 import edu.wpi.first.wpilibj.hal.FRCNetComm.tResourceType;
@@ -23,6 +24,11 @@ public class AlphaDrive extends RobotDrive {
 	 */
 	public AlphaDrive(int leftMotorChannel, int rightMotorChannel) {
 		super(leftMotorChannel, rightMotorChannel);
+	}
+	
+	public AlphaDrive(final int frontLeftMotor, final int rearLeftMotor, final int frontRightMotor,
+            final int rearRightMotor) {
+		super(frontLeftMotor, rearLeftMotor, frontRightMotor, rearRightMotor);
 	}
 
 	/**
@@ -96,5 +102,8 @@ public class AlphaDrive extends RobotDrive {
 		throttle = 1 - throttle;
 		setLeftRightMotorOutputs(rightMotorSpeed * throttle, leftMotorSpeed * throttle);
 	}
+	
+	public double getLeft()  { return m_rearLeftMotor.get(); }
+	public double getRight() { return m_rearRightMotor.get(); }
 
 }
