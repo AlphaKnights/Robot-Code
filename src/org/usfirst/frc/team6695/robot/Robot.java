@@ -6,7 +6,6 @@ import com.ctre.CANTalon;
 
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
@@ -29,8 +28,7 @@ public class Robot extends IterativeRobot {
 	/** Talon SRX motor controller for ball belt */
 	CANTalon beltMotor;
 	/** Drive configuration for robot drivetrain */
-//	AlphaDrive drivetrain;
-	RobotDrive drivetrain;
+	AlphaDrive drivetrain;
 	int avgCount;
 	double avgLinearDistance;
 	double avgSpeed;
@@ -86,7 +84,7 @@ public class Robot extends IterativeRobot {
 		xbox = new XboxController(1);
 //		ballThrottle = Config.baseBallThrottle;
 		//drivetrain = new AlphaDrive(Config.driveMotorLeftChannel, Config.driveMotorRightChannel);
-		drivetrain = new RobotDrive(new CANTalon(4), new CANTalon(2), new CANTalon(1), new CANTalon(3)); //new RobotDrive(4, 2, 1, 3);
+		drivetrain = new AlphaDrive(new CANTalon(4), new CANTalon(2), new CANTalon(1), new CANTalon(3)); ////new RobotDrive(4, 2, 1, 3);
 		//drivetrain.
 		ballDrive = new RobotDrive(new CANTalon(7), new CANTalon(5));
 		climbMotor = new CANTalon(6);
@@ -169,9 +167,8 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		climb();
 		shoot();
-		//drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
-		drivetrain.arcadeDrive(logitechJoy);
-		
+		drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
+		//drivetrain.arcadeDrive(logitechJoy);
 	}
 
 	/**
