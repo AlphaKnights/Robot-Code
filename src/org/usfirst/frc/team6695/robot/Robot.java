@@ -82,25 +82,29 @@ public class Robot extends IterativeRobot {
 		System.out.println("Starting UP");
 		logitechJoy = new Joystick(0);
 		xbox = new XboxController(1);
-//		ballThrottle = Config.baseBallThrottle;
-		//drivetrain = new AlphaDrive(Config.driveMotorLeftChannel, Config.driveMotorRightChannel);
-		drivetrain = new AlphaDrive(new CANTalon(4), new CANTalon(2), new CANTalon(1), new CANTalon(3)); ////new RobotDrive(4, 2, 1, 3);
-		//drivetrain.
+		// ballThrottle = Config.baseBallThrottle;
+		// drivetrain = new AlphaDrive(Config.driveMotorLeftChannel,
+		// Config.driveMotorRightChannel);
+		drivetrain = new AlphaDrive(new CANTalon(4), new CANTalon(2), new CANTalon(1), new CANTalon(3)); //// new
+																											//// RobotDrive(4,
+																											//// 2, 1,
+																											//// 3);
+		// drivetrain.
 		ballDrive = new RobotDrive(new CANTalon(7), new CANTalon(5));
 		climbMotor = new CANTalon(6);
-//		beltMotor = new CANTalon(Config.ballStirMotor);
+		// beltMotor = new CANTalon(Config.ballStirMotor);
 	}
 
 	/**
-	 * This function is run when the robot is first started up and should be
-	 * used for any initialization code.
+	 * This function is run when the robot is first started up and should be used
+	 * for any initialization code.
 	 */
 	@Override
 	public void robotInit() {
 		CameraServer.getInstance().startAutomaticCapture();
 		configSetup();
 	}
-	
+
 	boolean autonomousActive = true;
 	public final boolean rubeGoldberg = false;
 
@@ -118,21 +122,30 @@ public class Robot extends IterativeRobot {
 			DrivingData driveData = null;
 			DrivingDataType dataType = null;
 			switch (ms.getMode()) {
-			case OnOff: dataType = DrivingDataType.TroyLeft; break;
-			case OnOn: dataType = DrivingDataType.TroyMiddle; break;
-			case OffOn: dataType = DrivingDataType.TroyRight; break;
+			case OnOff:
+				dataType = DrivingDataType.TroyLeft;
+				break;
+			case OnOn:
+				dataType = DrivingDataType.TroyMiddle;
+				break;
+			case OffOn:
+				dataType = DrivingDataType.TroyRight;
+				break;
 			case OffOff:
 			case none:
-			default: dataType = DrivingDataType.Disabled; break;
+			default:
+				dataType = DrivingDataType.Disabled;
+				break;
 			}
 			driveData = new DrivingData(dataType);
 			int timeIndex = 0;
 			autotime.reset();
 			autotime.start();
 			if (dataType == DrivingDataType.TroyMiddle) {
-				while(autonomousActive) {
+				while (autonomousActive) {
 					if (autotime.get() * 1000 >= driveData.driveDataArray[timeIndex][0]) {
-						drivetrain.setLeftRightMotorOutputs(driveData.driveDataArray[timeIndex][1], driveData.driveDataArray[timeIndex][2]);
+						drivetrain.setLeftRightMotorOutputs(driveData.driveDataArray[timeIndex][1],
+								driveData.driveDataArray[timeIndex][2]);
 						System.out.println("motor set at " + autotime.get() * 1000);
 						System.out.println(timeIndex++);
 						if (timeIndex == driveData.driveDataArray.length) autonomousActive = false;
@@ -145,11 +158,11 @@ public class Robot extends IterativeRobot {
 
 	/** This function is called periodically during autonomous */
 	@Override
-	public void autonomousPeriodic() {}
+	public void autonomousPeriodic() {
+	}
 
 	/**
-	 * This function is called once each time the robot enters tele-operated
-	 * mode
+	 * This function is called once each time the robot enters tele-operated mode
 	 */
 	@Override
 	public void teleopInit() {
@@ -167,8 +180,11 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		climb();
 		shoot();
-		drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
-		//drivetrain.arcadeDrive(logitechJoy);
+		if (ms.getMode()==Mode.OffOff) {
+			
+		}
+		drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle() );
+		// drivetrain.arcadeDrive(logitechJoy);
 	}
 
 	/**
@@ -176,18 +192,20 @@ public class Robot extends IterativeRobot {
 	 **/
 	public void shoot() {
 		boolean ballShoot = xbox.getRawButton(Config.ballShootButton);
-
-		if (ballShoot && !prevBallShooter) prevBallShooter = !prevBallShooter;
-		prevBallShooter = ballShoot;
 		boolean lowerSpeed = xbox.getRawButton(Config.ballLowerSpeedButton);
 		boolean fasterSpeed = xbox.getRawButton(Config.ballFasterSpeedButton);
-		if (ballShoot && !prevBallShooter) {
-			System.out.println("Ball backward");
-			ballDrive.drive(-1, 0);
-		} else if (ballShoot && prevBallShooter) {
-			System.out.print("Ball forward");
-			if (lowerSpeed && !lsp) ballThrottle -= Config.deltaBallThrottle;
-			if (fasterSpeed && !isp) ballThrottle += Config.deltaBallThrottle;
+
+		// if (ballShoot && !prevBallShooter) prevBallShooter = !prevBallShooter;
+
+		// prevBallShooter = ballShoot;
+
+		// if (ballShoot && !prevBallShooter) {
+		// System.out.println("Ball backward");
+		// ballDrive.drive(-1, 0);
+		// } else if (ballShoot && prevBallShooter) {
+		if (ballShoot) {
+			if (lowerSpeed && !lsp) { ballThrottle -= Config.deltaBallThrottle; System.out.println("Lower Speed");}
+			if (fasterSpeed && !isp) {ballThrottle += Config.deltaBallThrottle; System.out.println("Increese Speed");}
 			if (ballShoot) ballDrive.drive(-ballThrottle, 0.0);
 			else ballDrive.drive(0.0, 0.0);
 		}
@@ -201,7 +219,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Deprecated
 	public void drive() {
-	//	drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
+		// drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(),
+		// logitechJoy.getThrottle());
 	}
 
 	/** Climber */
@@ -232,25 +251,23 @@ public class Robot extends IterativeRobot {
 		}
 
 	}
-	
+
 	Timer drivetrainTimer = new Timer();
 
 	public void DriveDistance(double speed, double seconds) {
 		/*
-		drivetrainEncLeft.reset();
-		drivetrainEncRight.reset();
-		while (Math.abs(drivetrainEncLeft.get()) < Math.abs(feet * Config.encUnit)
-				&& Math.abs(drivetrainEncRight.get()) < Math.abs(feet * Config.encUnit) && !teleOpCalled
-				&& autotime.get() < 15) {
-			drivetrain.drive(-speed, 0);
-			System.out.println("In Loop " + Math.abs(drivetrainEncLeft.get()) + " " + Math.abs(drivetrainEncRight.get()));
-		}
-		*/
-		
+		 * drivetrainEncLeft.reset(); drivetrainEncRight.reset(); while
+		 * (Math.abs(drivetrainEncLeft.get()) < Math.abs(feet * Config.encUnit) &&
+		 * Math.abs(drivetrainEncRight.get()) < Math.abs(feet * Config.encUnit) &&
+		 * !teleOpCalled && autotime.get() < 15) { drivetrain.drive(-speed, 0);
+		 * System.out.println("In Loop " + Math.abs(drivetrainEncLeft.get()) + " " +
+		 * Math.abs(drivetrainEncRight.get())); }
+		 */
+
 		drivetrainTimer.start();
 		while (drivetrainTimer.get() < seconds && !teleOpCalled && autotime.get() < 15)
 			drivetrain.drive(-speed, 0);
-		
+
 		brake(1);
 	}
 
@@ -287,8 +304,7 @@ public class Robot extends IterativeRobot {
 		/** linear distance from halfmark to gear loader, used by all */
 		double distToLoader = 68 / 12;
 		/**
-		 * radial distance in degrees between baseline and gear loader from
-		 * halfmark
+		 * radial distance in degrees between baseline and gear loader from halfmark
 		 */
 		double degToLoader = 60;
 
@@ -296,24 +312,24 @@ public class Robot extends IterativeRobot {
 			System.out.println("POS A NOGEAR");
 			// Drive to baseline
 			DriveDistance(0.6, 2.5);
-//			// Drive back to halfmark
-//			DriveDistance(-0.6, distToHalfmark);
-//			// Turn towards gear drop-off
-//			turn(degToLoader, 0.6);
-//			// Drive into gear loader
-//			DriveDistance(0.6, distToLoader - 1);
-//			DriveDistance(0.5, 1);
+			// // Drive back to halfmark
+			// DriveDistance(-0.6, distToHalfmark);
+			// // Turn towards gear drop-off
+			// turn(degToLoader, 0.6);
+			// // Drive into gear loader
+			// DriveDistance(0.6, distToLoader - 1);
+			// DriveDistance(0.5, 1);
 		} else if (ms.getMode() == Mode.OffOn) { // C
 			System.out.println("POS C NOGEAR");
 			// Drive to baseline
 			DriveDistance(0.6, 2.5);
-//			// Drive back to halfmark
-//			DriveDistance(-0.6, distToHalfmark);
-//			// Turn towards gear drop-off
-//			turn(-degToLoader, 0.6);
-//			// Drive into gear loader
-//			DriveDistance(0.6, distToLoader - 1);
-//			DriveDistance(0.5, 1);
+			// // Drive back to halfmark
+			// DriveDistance(-0.6, distToHalfmark);
+			// // Turn towards gear drop-off
+			// turn(-degToLoader, 0.6);
+			// // Drive into gear loader
+			// DriveDistance(0.6, distToLoader - 1);
+			// DriveDistance(0.5, 1);
 		} else if (ms.getMode() == Mode.OnOn) { // B
 			System.out.println("POS B NOMOBILITY");
 			DriveDistance(0.6, 1);
@@ -331,9 +347,11 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void testPeriodic() {
 		if (autotime.get() != 0) {
-	//		System.out.println((int)(autotime.get() * 1000) + "," + drivetrain.getLeft() + "," + drivetrain.getRight());
+			// System.out.println((int)(autotime.get() * 1000) + "," + drivetrain.getLeft()
+			// + "," + drivetrain.getRight());
 		} else autotime.start();
-	//	drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(), logitechJoy.getThrottle());
+		// drivetrain.arcadeDrive(logitechJoy, logitechJoy.getTrigger(),
+		// logitechJoy.getThrottle());
 		LiveWindow.run();
 	}
 
@@ -353,8 +371,8 @@ public class Robot extends IterativeRobot {
 	/**
 	 * If stop button is clicked, stop robot functions <br>
 	 * <b>THE DRIVE STATION HAS THIS! Just Press Space To ESTOP</b> <br>
-	 * Note: This will E-Stop the robot regardless of if the Driver Station
-	 * window has focus or not (THIS IS AN FRC THING)
+	 * Note: This will E-Stop the robot regardless of if the Driver Station window
+	 * has focus or not (THIS IS AN FRC THING)
 	 * 
 	 * @see <a href=
 	 *      "http://wpilib.screenstepslive.com/s/4485/m/24192/l/144976-frc-driver-station-powered-by-ni-labview">Drive
