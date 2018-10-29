@@ -254,22 +254,6 @@ public class Robot extends IterativeRobot {
 
 	Timer drivetrainTimer = new Timer();
 
-	public void DriveDistance(double speed, double seconds) {
-		/*
-		 * drivetrainEncLeft.reset(); drivetrainEncRight.reset(); while
-		 * (Math.abs(drivetrainEncLeft.get()) < Math.abs(feet * Config.encUnit) &&
-		 * Math.abs(drivetrainEncRight.get()) < Math.abs(feet * Config.encUnit) &&
-		 * !teleOpCalled && autotime.get() < 15) { drivetrain.drive(-speed, 0);
-		 * System.out.println("In Loop " + Math.abs(drivetrainEncLeft.get()) + " " +
-		 * Math.abs(drivetrainEncRight.get())); }
-		 */
-
-		drivetrainTimer.start();
-		while (drivetrainTimer.get() < seconds && !teleOpCalled && autotime.get() < 15)
-			drivetrain.drive(-speed, 0);
-
-		brake(1);
-	}
 
 	@Deprecated
 	public void turn(double deg, double speed) {
@@ -291,21 +275,50 @@ public class Robot extends IterativeRobot {
 		brakeTimer.reset();
 	}
 
+	public void DriveDistance(double speed, double seconds) {
+		/*
+		 * drivetrainEncLeft.reset(); drivetrainEncRight.reset(); while
+		 * (Math.abs(drivetrainEncLeft.get()) < Math.abs(feet * Config.encUnit) &&
+		 * Math.abs(drivetrainEncRight.get()) < Math.abs(feet * Config.encUnit) &&
+		 * !teleOpCalled && autotime.get() < 15) { drivetrain.drive(-speed, 0);
+		 * System.out.println("In Loop " + Math.abs(drivetrainEncLeft.get()) + " " +
+		 * Math.abs(drivetrainEncRight.get())); }
+		 */
+
+		drivetrainTimer.start();
+		while (drivetrainTimer.get() < seconds && !teleOpCalled && autotime.get() < 15)
+			drivetrain.drive(-speed, 0);
+
+		brake(1);
+	}
+
 	public void autonomous() {
-		/** linear distance from starting position A / C to baseline */
+
+		/** The time in seconds of the Robot to go forward */
+		double AutoSpeed = 1;
+		/** The power of the robot CIMs, from 0-1 */
+		double AutoSeconds = 0.5;
+
+		DriveDistance(AutoSpeed, AutoSeconds);
+
+
+
+		// Ignore the rest of the stuff
+
+		/** linear distance from starting position A / C to baseline *//*
 		double distToBaseline = 187.5 / 12;
-		/** linear distance from baseline to halfmark, used by all positions */
+		*//** linear distance from baseline to halfmark, used by all positions *//*
 		double distToHalfmark = (distToBaseline - 94.5 / 12) / 12;
-		/**
+		*//**
 		 * linear distance from position B to halfmark, merging with C position
 		 * autonomous
-		 */
+		 *//*
 		double diagDistToHalfmark = 131 / 12;
-		/** linear distance from halfmark to gear loader, used by all */
+		*//** linear distance from halfmark to gear loader, used by all *//*
 		double distToLoader = 68 / 12;
-		/**
+		*//**
 		 * radial distance in degrees between baseline and gear loader from halfmark
-		 */
+		 *//*
 		double degToLoader = 60;
 
 		if (ms.getMode() == Mode.OnOff) {// A
@@ -335,7 +348,7 @@ public class Robot extends IterativeRobot {
 			DriveDistance(0.6, 1);
 		} else if (ms.getMode() == Mode.OffOff) {
 			System.out.println("POS A/B/C NOGEAR NOMOBILITY");
-		}
+		*/}
 	}
 
 	public void getSpeeds() {
