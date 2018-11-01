@@ -294,9 +294,9 @@ public class Robot extends IterativeRobot {
 
 	public void autonomous() {
 
-		/** The time in seconds of the Robot to go forward */
+		/* The time in seconds of the Robot to go forward */
 		double AutoSpeed = 1;
-		/** The power of the robot CIMs, from 0-1 */
+		/* The power of the robot CIMs, from 0-1 */
 		double AutoSeconds = 0.5;
 
 		DriveDistance(AutoSpeed, AutoSeconds);
@@ -305,18 +305,18 @@ public class Robot extends IterativeRobot {
 
 		// Ignore the rest of the stuff
 
-		/** linear distance from starting position A / C to baseline *//*
+		/* linear distance from starting position A / C to baseline *//*
 		double distToBaseline = 187.5 / 12;
-		*//** linear distance from baseline to halfmark, used by all positions *//*
+		*//* linear distance from baseline to halfmark, used by all positions *//*
 		double distToHalfmark = (distToBaseline - 94.5 / 12) / 12;
-		*//**
+		*//*
 		 * linear distance from position B to halfmark, merging with C position
 		 * autonomous
 		 *//*
 		double diagDistToHalfmark = 131 / 12;
-		*//** linear distance from halfmark to gear loader, used by all *//*
+		*//* linear distance from halfmark to gear loader, used by all *//*
 		double distToLoader = 68 / 12;
-		*//**
+		*//*
 		 * radial distance in degrees between baseline and gear loader from halfmark
 		 *//*
 		double degToLoader = 60;
